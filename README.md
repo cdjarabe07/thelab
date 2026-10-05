@@ -92,6 +92,6 @@ Le site produit aussi un sitemap, un flux RSS (`/notes/rss.xml`), des métadonn�
 
 1. Créer un dépôt GitHub `thelab` et y pousser ce dossier.
 2. Sur [vercel.com/new](https://vercel.com/new), importer le dépôt. Vercel reconnaît Astro : cliquer sur **Deploy**.
-3. Reporter l'adresse obtenue dans `site` (`astro.config.mjs`).
+3. Le site est en ligne sur https://thelab-beta.vercel.app (adresse reportée dans `site`, `astro.config.mjs`).
 
 Chaque `git push` reconstruit et republie le site ; si le build échoue (contenu incohérent, lien mort), la version en ligne reste inchangée.

@@ -6,8 +6,8 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
 export default defineConfig({
-  // Adresse publique du site (sitemap, RSS, liens de partage). À mettre à jour après la mise en ligne.
-  site: 'https://thelab.vercel.app',
+  // Adresse publique du site (sitemap, RSS, liens de partage, thème Giscus). À changer si un domaine personnalisé est ajouté.
+  site: 'https://thelab-beta.vercel.app',
   trailingSlash: 'always',
   integrations: [sitemap({ filter: (page) => !page.includes('/recherche/') })],
   markdown: {
