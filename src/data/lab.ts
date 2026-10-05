@@ -53,3 +53,26 @@ export const GISCUS = {
   categoryId: "DIC_kwDOU75a7s4DHDf7",
 };
 export const giscusEnabled = () => Boolean(GISCUS.repoId && GISCUS.categoryId);
+
+/**
+ * Formulaire de contact (Web3Forms) : les messages arrivent par e-mail, sans serveur.
+ * Clé gratuite sur https://web3forms.com (saisir l'adresse de réception, la clé arrive par e-mail).
+ * Cette clé est faite pour être publique : elle ne permet que d'envoyer un message vers cette adresse.
+ * Tant qu'elle est vide, la page About affiche seulement les liens LinkedIn et GitHub.
+ */
+export const CONTACT = { web3formsKey: "" };
+
+/**
+ * Newsletter (Buttondown) : les abonnés reçoivent les nouvelles notes par e-mail.
+ * Compte gratuit sur https://buttondown.com ; indiquer ici le nom d'utilisateur.
+ * L'envoi automatique se règle dans Buttondown (Automations → RSS-to-email) avec le flux /notes/rss.xml.
+ * Tant que ce champ est vide, aucun formulaire d'abonnement n'est affiché.
+ */
+export const NEWSLETTER = { buttondown: "" };
+
+/**
+ * Statistiques de visite (Vercel Web Analytics) : sans cookies, sans bandeau de consentement.
+ * Le script n'existe sur le site qu'une fois l'option activée dans le tableau de bord Vercel
+ * (projet thelab → Analytics → Enable). Passer à false pour le retirer.
+ */
+export const ANALYTICS = { vercel: true };

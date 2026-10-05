@@ -23,6 +23,7 @@ for (const [from, src] of html) {
   for (const [, raw] of src.matchAll(/\s(?:href|src)="([^"]+)"/g)) {
     if (!raw.startsWith('/') && !raw.startsWith('#')) continue;   // liens externes : non vérifiés
     if (raw.startsWith('//')) continue;
+    if (raw.startsWith('/_vercel/')) continue;                  // servi par la plateforme Vercel, absent de dist/
     const [pathPart, hash] = raw.split('#');
     const path = (pathPart || from).split('?')[0];
     checked++;

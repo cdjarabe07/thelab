@@ -7,7 +7,7 @@ import '@fontsource/noticia-text/400.css';
 import '@fontsource/noticia-text/400-italic.css';
 import '@fontsource/noticia-text/700.css';
 import '../styles/global.css';
-import { NAV, LINKS, SITE } from '../data/lab';
+import { NAV, LINKS, SITE, ANALYTICS } from '../data/lab';
 import { assertIntegrity, formatDate } from '../lib';
 
 await assertIntegrity();
@@ -56,6 +56,8 @@ const ld = jsonld ?? { '@context': 'https://schema.org', '@type': 'WebSite', nam
   <link rel="sitemap" href="/sitemap-index.xml">
   <script type="application/ld+json" set:html={JSON.stringify(ld)} />
   <slot name="head" />
+  {/* Statistiques sans cookies : le script est servi par Vercel une fois Analytics activé */}
+  {ANALYTICS.vercel && import.meta.env.PROD && <script defer src="/_vercel/insights/script.js"></script>}
 </head>
 <body>
   <a class="skip" href="#contenu">Aller au contenu</a>
