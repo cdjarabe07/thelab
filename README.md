@@ -24,15 +24,22 @@ domains.yaml ◄──────────── projects/*.md ◄───�
 |---|---|---|
 | `domains` | `domains.yaml` | Vocabulaire contrôlé. Chaque domaine a sa page `/domaines/<id>/`. |
 | `projects` | `projects/<id>.md` | Tout projet, de l'idée à l'étude de cas. `status` : `roadmap`, `en-cours` ou `termine`. |
-| `notes` | `notes/<id>.md` | Le carnet : six types (journal, expérimentation, apprentissage, reproduction, post-mortem, réflexion). |
+| `notes` | `notes/<id>.md` | Le carnet : six types (journal, expérimentation, apprentissage, reproduction, post-mortem, réflexion). Une note peut concerner plusieurs projets. |
 | `works` | `works.yaml` | Stages, compétitions, analyses, exercices. |
-| `resources` | `resources.yaml` | Données, outils, code réutilisables. |
+| `resources` | `resources.yaml` | Données, notebooks, code, outils, lectures (`kind`), rattachés à un projet. |
+| `publications` | `publications/<id>.md` | Travaux formels (rapport, étude de cas, reproduction, article, présentation). Vide pour l'instant. |
 
 Toutes les flèches sont des références vérifiées : une note qui cite un projet inexistant, ou un domaine mal orthographié, **fait échouer le build** avec un message qui dit quoi corriger. Rien de cassé ne part en ligne.
 
 La configuration (niveaux, types de notes, menu, liens) est dans `src/data/lab.ts`.
 
 ## Tâches courantes
+
+Chaque type de contenu a un **modèle commenté**, non publié car son nom commence par `_` : `src/content/projects/_modele.md`, `src/content/notes/_modele.md`, `src/content/publications/_modele.md`. Pour créer un contenu, copier le modèle sous un nouveau nom.
+
+### Rédiger une fiche projet
+
+Une fiche documente une démarche de recherche. Sections, toutes facultatives et dans cet ordre : question de départ, contexte, données et sources, méthodologie, architecture et pipeline, expérimentations, résultats, limites, ce qui n'a pas fonctionné, interprétation, état actuel, prochaines pistes. Ne garder que les sections qui ont un contenu réel. « Code, dashboard et ressources » et « Notes associées » sont générées automatiquement.
 
 ### Écrire une note
 
@@ -45,7 +52,7 @@ type: "experience"
 excerpt: "Une ou deux phrases qui résument la note."
 draft: true
 minutes: "4–6"
-project: "dakar-risque-inondation"
+projects: ["dakar-risque-inondation"]
 domains: ["geospatial", "data-science"]
 ---
 
