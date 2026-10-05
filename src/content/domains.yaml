@@ -1,0 +1,32 @@
+# Vocabulaire contrôlé des domaines. Tout tag utilisé ailleurs doit exister ici, sinon le build échoue.
+# Format : une entrée par ligne (syntaxe JSON, valide en YAML).
+- {"id": "data-science", "name": "Data Science", "desc": "Analyse exploratoire, statistiques appliquées et communication des résultats."}
+- {"id": "statistics", "name": "Statistics", "desc": "Inférence, tests et modélisation statistique."}
+- {"id": "machine-learning", "name": "Machine Learning", "desc": "Modèles supervisés et non supervisés sur données tabulaires."}
+- {"id": "deep-learning", "name": "Deep Learning", "desc": "Réseaux de neurones profonds."}
+- {"id": "time-series", "name": "Time Series", "desc": "Séries temporelles : analyse, prévision, validation glissante."}
+- {"id": "anomaly-detection", "name": "Anomaly Detection", "desc": "Repérer les observations ou comportements anormaux."}
+- {"id": "decision-intelligence", "name": "Decision Intelligence", "desc": "Passer de la prévision à l'aide à la décision : scénarios, signaux, seuils."}
+- {"id": "computer-vision", "name": "Computer Vision", "desc": "Images et vidéos : détection, segmentation, reconnaissance."}
+- {"id": "earth-observation", "name": "Earth Observation", "desc": "Images satellites (optique, radar) appliquées au territoire."}
+- {"id": "geospatial", "name": "Geospatial", "desc": "Données géographiques : cartes, unités spatiales, analyse territoriale."}
+- {"id": "nlp", "name": "NLP", "desc": "Traitement automatique du langage."}
+- {"id": "llm", "name": "LLM", "desc": "Grands modèles de langage : intégration, garde-fous, évaluation."}
+- {"id": "rag", "name": "RAG", "desc": "Génération augmentée par la recherche documentaire."}
+- {"id": "document-ai", "name": "Document AI", "desc": "Comprendre et organiser des documents : OCR, extraction, classement."}
+- {"id": "multimodal", "name": "Multimodal", "desc": "Combiner texte, images, tableaux et audio."}
+- {"id": "agents", "name": "Agents", "desc": "Systèmes qui planifient et utilisent des outils."}
+- {"id": "graph-ml", "name": "Graph ML", "desc": "Apprentissage sur des graphes et des réseaux."}
+- {"id": "recommender-systems", "name": "Recommender Systems", "desc": "Retrieval, ranking et personnalisation."}
+- {"id": "reinforcement-learning", "name": "Reinforcement Learning", "desc": "Agents qui apprennent à décider par essai et erreur."}
+- {"id": "causal-ml", "name": "Causal ML", "desc": "Estimer l'effet d'une intervention, pas seulement une corrélation."}
+- {"id": "research", "name": "Research", "desc": "Reproduction de papiers et questions de recherche originales."}
+- {"id": "data-engineering", "name": "Data Engineering", "desc": "Collecte, pipelines et mise à disposition des données."}
+- {"id": "mlops", "name": "MLOps", "desc": "Déploiement, suivi et maintenance des modèles en production."}
+- {"id": "real-time", "name": "Real-Time", "desc": "Traitement en flux et décisions en temps réel."}
+- {"id": "distributed-ai", "name": "Distributed AI", "desc": "Entraînement et traitement distribués."}
+- {"id": "edge-ai", "name": "Edge AI", "desc": "Inférence locale sous contraintes de calcul."}
+- {"id": "iot", "name": "IoT", "desc": "Capteurs et objets connectés."}
+- {"id": "web", "name": "Web", "desc": "Applications et interfaces web pour rendre les résultats utilisables."}
+- {"id": "sql", "name": "SQL", "desc": "Requêtes et analyse de bases relationnelles."}
+- {"id": "bi", "name": "BI", "desc": "Tableaux de bord et reporting."}
