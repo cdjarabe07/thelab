@@ -60,7 +60,7 @@ export const giscusEnabled = () => Boolean(GISCUS.repoId && GISCUS.categoryId);
  * Cette clé est faite pour être publique : elle ne permet que d'envoyer un message vers cette adresse.
  * Tant qu'elle est vide, la page About affiche seulement les liens LinkedIn et GitHub.
  */
-export const CONTACT = { web3formsKey: "" };
+export const CONTACT = { web3formsKey: "a02567b5-8e6f-4617-9ffa-d367864d9286" };
 
 /**
  * Newsletter (Buttondown) : les abonnés reçoivent les nouvelles notes par e-mail.
