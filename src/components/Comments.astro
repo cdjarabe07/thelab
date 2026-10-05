@@ -1,0 +1,63 @@
+---
+// Discussion sous une note, via Giscus (GitHub Discussions). Une discussion par page, créée au premier commentaire.
+import { GISCUS, giscusEnabled } from '../data/lab';
+
+const enabled = giscusEnabled();
+// Thème aux couleurs du site : Giscus le charge depuis l'adresse publique du site,
+// il ne peut donc s'appliquer qu'en production, une fois `site` renseigné dans astro.config.mjs.
+const theme = import.meta.env.PROD ? new URL('/giscus-theme.css', Astro.site).href : 'light';
+---
+{enabled ? (
+  <section class="discussion" id="discussion" data-pagefind-ignore>
+    <div class="label">Discussion</div>
+    <p class="muted">Une question sur la méthode, une limite que j'ai manquée, une piste à creuser ? Les commentaires sont publics et passent par un compte GitHub.</p>
+    <div
+      class="giscus-mount"
+      data-repo={GISCUS.repo}
+      data-repo-id={GISCUS.repoId}
+      data-category={GISCUS.category}
+      data-category-id={GISCUS.categoryId}
+      data-theme={theme}
+    ></div>
+  </section>
+) : import.meta.env.DEV && (
+  <section class="discussion" id="discussion">
+    <div class="label">Discussion</div>
+    <p class="empty">Commentaires désactivés : renseigner <code>repoId</code> et <code>categoryId</code> dans <code>GISCUS</code> (src/data/lab.ts). Ce message n'apparaît qu'en développement.</p>
+  </section>
+)}
+
+<script>
+  // Charge Giscus seulement quand la zone devient visible : rien n'est téléchargé pour qui ne lit pas jusqu'au bout.
+  const mount = document.querySelector<HTMLElement>('.giscus-mount');
+  if (mount) {
+    const load = () => {
+      const s = document.createElement('script');
+      s.src = 'https://giscus.app/client.js';
+      s.async = true;
+      s.crossOrigin = 'anonymous';
+      const attrs: Record<string, string> = {
+        'data-repo': mount.dataset.repo!,
+        'data-repo-id': mount.dataset.repoId!,
+        'data-category': mount.dataset.category!,
+        'data-category-id': mount.dataset.categoryId!,
+        'data-mapping': 'pathname',
+        'data-strict': '1',
+        'data-reactions-enabled': '1',
+        'data-emit-metadata': '0',
+        'data-input-position': 'top',
+        'data-theme': mount.dataset.theme!,
+        'data-lang': 'fr',
+        'data-loading': 'lazy',
+      };
+      for (const [k, v] of Object.entries(attrs)) s.setAttribute(k, v);
+      mount.appendChild(s);
+    };
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) { io.disconnect(); load(); }
+      }, { rootMargin: '400px' });
+      io.observe(mount);
+    } else load();
+  }
+</script>

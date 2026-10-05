@@ -1,0 +1,69 @@
+/* Thème Giscus de TheLab : la palette du site appliquée aux variables du thème « light » de Giscus.
+   Chargé par Giscus depuis l'adresse publique du site (voir src/components/Comments.astro). */
+main {
+  --color-prettylights-syntax-comment: #6e5a69;
+  --color-prettylights-syntax-constant: #531348;
+  --color-prettylights-syntax-entity: #531348;
+  --color-prettylights-syntax-keyword: #8a5a2b;
+  --color-prettylights-syntax-string: #5c4a1c;
+  --color-prettylights-syntax-variable: #8a5a2b;
+
+  --color-btn-text: #270c22;
+  --color-btn-bg: #f2f2ef;
+  --color-btn-border: #3b0d3333;
+  --color-btn-hover-bg: #e9e6df;
+  --color-btn-hover-border: #270c22;
+  --color-btn-active-bg: #e2ded5;
+  --color-btn-selected-bg: #e9e6df;
+  --color-btn-primary-text: #f2f2ef;
+  --color-btn-primary-bg: #270c22;
+  --color-btn-primary-border: #270c22;
+  --color-btn-primary-hover-bg: #531348;
+  --color-btn-primary-hover-border: #531348;
+  --color-btn-primary-selected-bg: #531348;
+  --color-btn-primary-disabled-text: #f2f2efcc;
+  --color-btn-primary-disabled-bg: #270c2266;
+  --color-btn-primary-disabled-border: #270c2266;
+
+  --color-action-list-item-default-hover-bg: #3b0d330d;
+  --color-segmented-control-bg: #3b0d330d;
+  --color-segmented-control-button-bg: #f2f2ef;
+  --color-segmented-control-button-selected-border: #270c22;
+
+  --color-fg-default: #270c22;
+  --color-fg-muted: #5e4a5a;
+  --color-fg-subtle: #7d6b78;
+
+  --color-canvas-default: #f2f2ef;
+  --color-canvas-overlay: #f2f2ef;
+  --color-canvas-inset: #ebe8e1;
+  --color-canvas-subtle: #ebe8e1;
+
+  --color-border-default: #3b0d3333;
+  --color-border-muted: #3b0d331f;
+
+  --color-neutral-muted: #3b0d331a;
+
+  --color-accent-fg: #531348;
+  --color-accent-emphasis: #531348;
+  --color-accent-muted: #53134866;
+  --color-accent-subtle: #5313481a;
+
+  --color-success-fg: #3d6b2a;
+  --color-attention-fg: #8a5a2b;
+  --color-attention-muted: #b9a16f66;
+  --color-attention-subtle: #b9a16f26;
+  --color-danger-fg: #a1262f;
+  --color-danger-muted: #a1262f66;
+  --color-danger-subtle: #a1262f1a;
+
+  --color-primer-shadow-inset: inset 0 1px 0 #3b0d330a;
+  --color-scale-gray-1: #e9e6df;
+  --color-scale-blue-1: #e9dfe7;
+
+  --color-social-reaction-bg-hover: #e9e6df;
+  --color-social-reaction-bg-reacted-hover: #e9dfe7;
+}
+
+main .pagination-loader-container { background-image: none; }
+main .gsc-loading-image { filter: grayscale(1); }

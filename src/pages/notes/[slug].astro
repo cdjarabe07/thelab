@@ -4,7 +4,8 @@ import 'katex/dist/katex.min.css';
 import Base from '../../layouts/Base.astro';
 import NoteRow from '../../components/NoteRow.astro';
 import Tags from '../../components/Tags.astro';
-import { NOTE_TYPES, SITE } from '../../data/lab';
+import Comments from '../../components/Comments.astro';
+import { NOTE_TYPES, SITE, giscusEnabled } from '../../data/lab';
 import { formatDate, getDomains, getNotes, isoDate, projectUrl, refIds, type Note } from '../../lib';
 
 export async function getStaticPaths() {
@@ -68,6 +69,7 @@ const jsonld = {
         <ol>
           {headings.filter((h) => h.depth === 2).map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
           <li><a href="#citer">Citer cette note</a></li>
+          {giscusEnabled() && <li><a href="#discussion">Discussion</a></li>}
         </ol>
         {d.domains.length > 0 && <>
           <div class="label" style="margin-top:32px">Domaines</div>
@@ -82,6 +84,7 @@ const jsonld = {
           <pre><code>{bibtex}</code></pre>
           <button class="btn ghost" type="button" data-copy={bibtex}>Copier le BibTeX</button>
         </section>
+        <Comments />
       </article>
     </div>
 

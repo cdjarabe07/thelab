@@ -338,3 +338,8 @@ table.data td.num { white-space: nowrap; }
 }
 .search-box .pagefind-ui__result-title, .search-box .pagefind-ui__message, .search-box .pagefind-ui__button, .search-box .pagefind-ui__search-input { font-family: var(--font-head) !important; }
 .search-box mark { background: var(--gold); color: var(--ink); }
+
+/* Discussion (Giscus) */
+.discussion { border-top: 1px solid var(--ink); margin-top: 56px; padding-top: 20px; }
+.discussion > p { font-size: 0.95em; margin: 8px 0 24px; }
+.discussion .giscus-mount { min-height: 120px; }

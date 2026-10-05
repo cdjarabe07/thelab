@@ -67,6 +67,18 @@ Un sous-projet déclare son programme avec `parent: "smart-city"` : le programme
 
 Ajouter une ligne dans `src/content/domains.yaml`. Il ne peut pas y avoir de tag hors de cette liste.
 
+### Activer les commentaires (Giscus)
+
+Les discussions sous les notes sont stockées dans les **Discussions GitHub** du dépôt : pas de base de données, et les lecteurs commentent avec leur compte GitHub. Une discussion est créée automatiquement au premier commentaire d'une note.
+
+1. Le dépôt `cdjarabe07/thelab` doit être **public**.
+2. *Settings → General → Features* : cocher **Discussions**. Créer une catégorie **Notes** de type *Announcement* (seul toi et Giscus peuvent ouvrir une discussion ; tout le monde peut y répondre).
+3. Installer l'app Giscus sur le dépôt : https://github.com/apps/giscus
+4. Sur https://giscus.app, saisir `cdjarabe07/thelab`, choisir la catégorie **Notes** et copier `data-repo-id` et `data-category-id`.
+5. Les coller dans `GISCUS` (`src/data/lab.ts`) : `repoId` et `categoryId`.
+
+Le thème aux couleurs du site (`public/giscus-theme.css`) s'applique en production, une fois `site` renseigné dans `astro.config.mjs`.
+
 ## Ce que le build garantit
 
 1. **Schémas** : champs obligatoires, valeurs autorisées, URL valides.

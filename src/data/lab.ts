@@ -39,3 +39,17 @@ export const NOTE_TYPES: Record<string, { name: string; desc: string }> = {
   postmortem:    { name: "Post-mortem",     desc: "Ce qui n'a pas marché, pourquoi, et ce que je change." },
   reflexion:     { name: "Réflexion",       desc: "Choix techniques, méthode, lectures, questions ouvertes." },
 };
+
+/**
+ * Commentaires des notes (Giscus) : stockés dans les Discussions GitHub du dépôt, sans base de données.
+ * Pour les activer : rendre le dépôt public, activer les Discussions, installer l'app giscus
+ * (https://github.com/apps/giscus), puis copier repoId et categoryId depuis https://giscus.app.
+ * Tant que ces deux champs sont vides, aucune zone de commentaires n'est affichée.
+ */
+export const GISCUS = {
+  repo: "cdjarabe07/thelab",
+  repoId: "",
+  category: "Notes",
+  categoryId: "",
+};
+export const giscusEnabled = () => Boolean(GISCUS.repoId && GISCUS.categoryId);
