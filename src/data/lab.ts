@@ -48,8 +48,8 @@ export const NOTE_TYPES: Record<string, { name: string; desc: string }> = {
  */
 export const GISCUS = {
   repo: "cdjarabe07/thelab",
-  repoId: "",
+  repoId: "R_kgDOU75a7g",
   category: "Notes",
-  categoryId: "",
+  categoryId: "DIC_kwDOU75a7s4DHDf7",
 };
 export const giscusEnabled = () => Boolean(GISCUS.repoId && GISCUS.categoryId);
