@@ -7,6 +7,7 @@ import '@fontsource/noticia-text/400.css';
 import '@fontsource/noticia-text/400-italic.css';
 import '@fontsource/noticia-text/700.css';
 import '../styles/global.css';
+import Analytics from '@vercel/analytics/astro';
 import { NAV, LINKS, SITE, ANALYTICS, NEWSLETTER } from '../data/lab';
 import { assertIntegrity, formatDate } from '../lib';
 
@@ -56,8 +57,9 @@ const ld = jsonld ?? { '@context': 'https://schema.org', '@type': 'WebSite', nam
   <link rel="sitemap" href="/sitemap-index.xml">
   <script type="application/ld+json" set:html={JSON.stringify(ld)} />
   <slot name="head" />
-  {/* Statistiques sans cookies : le script est servi par Vercel une fois Analytics activé */}
-  {ANALYTICS.vercel && import.meta.env.PROD && <script defer src="/_vercel/insights/script.js"></script>}
+  {/* Statistiques sans cookies (Vercel Web Analytics). Le composant officiel lit au build le chemin
+      propre au projet fourni par Vercel ; un chemin fixe (/_vercel/insights/) ne fonctionne plus. */}
+  {ANALYTICS.vercel && <Analytics />}
 </head>
 <body>
   <a class="skip" href="#contenu">Aller au contenu</a>
