@@ -1,0 +1,112 @@
+---
+import Base from '../layouts/Base.astro';
+import DakarMap from '../components/DakarMap.astro';
+import ProjectRow from '../components/ProjectRow.astro';
+import NoteRow from '../components/NoteRow.astro';
+import { LEVELS, CURRENT_LEVELS, LINKS } from '../data/lab';
+import { getActiveProjects, getNotes, getRoadmap, projectUrl } from '../lib';
+
+const projects = await getActiveProjects();
+const roadmap = await getRoadmap();
+const notes = (await getNotes()).slice(0, 3);
+const current = projects.filter((p) => p.data.status === 'en-cours' && projectUrl(p)).slice(0, 2);
+---
+<Base page="home">
+  <div class="frame">
+    <section class="hero">
+      <h1><span class="tl">TheLab</span><span>Construire, expérimenter, documenter.</span></h1>
+      <div class="hero-meta">
+        <p class="hero-intro"><span>TheLab est l'espace de recherche personnel de Caleb Djarabé. J'y construis des projets data et IA, j'y teste des idées et j'y documente ce que j'apprends, impasses comprises. <a href="/about/">En savoir plus</a>.</span></p>
+        <div class="fact">
+          <div class="label">En cours</div>
+          {current.map((p) => <div class="value"><a href={projectUrl(p)!}>{p.data.title}</a></div>)}
+        </div>
+        <div class="fact">
+          <div class="label">Roadmap</div>
+          <div class="value"><a href="/roadmap/">{roadmap.length} pistes planifiées</a></div>
+          <div class="sub muted">Des projets à venir, pas des réalisations</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <DakarMap
+    label="Figure · Projet en cours"
+    title="Exposition relative aux inondations, 53 communes de Dakar"
+    text="Score composite à partir de l'altitude du sol, des cuvettes et de l'eau détectée par radar Sentinel-1 après les fortes pluies. Un classement entre communes, pas une probabilité d'inondation."
+    link="/projects/dakar-risque-inondation/"
+  />
+
+  <main class="frame">
+    <section class="section">
+      <div class="split">
+        <div>
+          <div class="label arrow">Démarche</div>
+          <h2>Partir d'un vrai problème, croiser les disciplines, tout documenter.</h2>
+        </div>
+        <p>Un projet du lab commence par une question concrète, souvent économique ou urbaine, et mobilise ce qu'il faut pour y répondre : statistiques, machine learning, séries temporelles, vision, NLP, graphes, systèmes. Les notes gardent la trace du chemin : ce qui a été essayé, ce qui a marché, ce qui a échoué et pourquoi.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="list-head">
+        <div class="chapter"><span class="n">01</span><span class="label">Projets</span></div>
+        <a class="link-small" href="/projects/">Tous les projets [ -&gt; ]</a>
+      </div>
+      {projects.map((p) => <ProjectRow project={p} />)}
+      <div class="list-foot"><span class="label muted">Smart City ·</span> <a class="label" href="/roadmap/">le risque d'inondation est le premier chantier, la suite est sur la roadmap</a></div>
+    </section>
+
+    <section class="section">
+      <div class="list-head">
+        <div class="chapter"><span class="n">02</span><span class="label">Expérimentations &amp; notes</span></div>
+        <a class="link-small" href="/notes/">Toutes les notes [ -&gt; ]</a>
+      </div>
+      <p class="list-intro">Le lab n'est pas une vitrine de projets terminés. Les notes documentent le travail en train de se faire : journaux de projet, expérimentations, reproductions, erreurs et réflexions techniques.</p>
+      {notes.map((n) => <NoteRow note={n} />)}
+      <div class="list-foot"><a class="label" href="/notes/">+ Les six types de notes</a></div>
+    </section>
+
+    <section class="section tight" id="trajectoire">
+      <div class="list-head" style="border-bottom:0">
+        <div class="chapter"><span class="n">03</span><span class="label">Trajectoire · des projets vers la R&amp;D</span></div>
+      </div>
+      <div class="levels">
+        {Object.entries(LEVELS).map(([k, l]) => (
+          <div class:list={['level', { current: CURRENT_LEVELS[k] }]}>
+            <div class="num">{k}</div><h4>{l.name}</h4><p>{l.desc}</p>
+            {CURRENT_LEVELS[k] && <span class="here">{CURRENT_LEVELS[k]}</span>}
+          </div>
+        ))}
+      </div>
+      <p class="list-intro muted">Une progression de recherche, pas un cursus : chaque niveau ajoute une couche de difficulté technique, jusqu'aux questions originales.</p>
+    </section>
+
+    <section class="section about">
+      <div>
+        <div class="label arrow">Travailler avec <span class="tl">TheLab</span></div>
+        <p style="max-width:60ch">Le lab est ouvert aux collaborations, aux idées de projets et aux échanges avec des équipes data et R&amp;D. Si un sujet vous intéresse, si vous avez des données à explorer ou une question qui mérite un vrai projet, écrivez-moi.</p>
+        <figure class="chart">
+          <img src="/img/uemoa-inflation.svg" alt="Inflation au Sénégal de 1998 à 2024, puis prévisions 2026 (2,9 %) et 2027 (1,7 %) avec un intervalle de confiance à 95 % qui traverse zéro.">
+          <figcaption>Inflation au Sénégal, 1998–2024, et prévisions 2026–2027 (SARIMA, IC 95 %). Source : BCEAO via DBnomics, <a href="/projects/observatoire-uemoa/">observatoire UEMOA</a>. 2025 n'est pas encore publiée.</figcaption>
+        </figure>
+      </div>
+      <aside>
+        <div class="label arrow">Principe</div>
+        <p>Un projet doit apprendre plusieurs choses à la fois. Mieux vaut une dizaine d'études de cas solides que quarante petits exercices.</p>
+        <a class="boxed" href="/about/#contact">Ouvert à la collaboration →</a>
+      </aside>
+    </section>
+
+    <section class="section faq tight">
+      <div class="label arrow" style="margin-bottom:16px">F.A.Q.</div>
+      <details><summary>Qu'est-ce que TheLab ?</summary><p>Le site personnel de Caleb Djarabé. Il rassemble ses projets en data science et en IA, ses notes de travail et, à terme, des publications et des ressources réutilisables.</p></details>
+      <details><summary>TheLab est-il rattaché à une institution ?</summary><p>Non. C'est un projet personnel et indépendant, sans lien avec la BCEAO, la Commission de l'UEMOA ou les collectivités de Dakar. Les données publiques de ces institutions sont utilisées telles qu'elles sont publiées.</p></details>
+      <details><summary>Les résultats peuvent-ils servir à prendre des décisions ?</summary><p>Ils n'ont pas de valeur officielle. Les prévisions de l'observatoire UEMOA sont des estimations statistiques, accompagnées d'un intervalle de confiance à 95 %. Le score d'inondation de Dakar est un classement relatif entre communes : ce n'est pas une probabilité, et il n'a pas été validé sur des inondations observées. Pour une décision, référez-vous aux sources officielles (BCEAO, ANSD, ANACIM, protection civile).</p></details>
+      <details><summary>D'où viennent les données ?</summary><p>De sources publiques, indiquées sur chaque projet avec leur date de mise à jour : BCEAO via DBnomics pour l'économie ; OpenStreetMap, Copernicus (Sentinel-1, DEM GLO-30) et CHIRPS pour le risque d'inondation.</p></details>
+      <details><summary>Comment savoir où en est un projet ?</summary><p>Chaque projet affiche un statut. « En cours » : le travail a commencé et des résultats sont publiés. « Roadmap » : le projet est planifié mais pas commencé. Les notes marquées « Brouillon » n'ont pas encore été relues.</p></details>
+      <details><summary>Le code est-il réutilisable ?</summary><p>Le code des projets est public sur GitHub. Aucune licence n'est encore déclarée sur les dépôts : pour une réutilisation, demandez l'autorisation. Les données gardent la licence de leur source (par exemple ODbL pour OpenStreetMap).</p></details>
+      <details><summary>Comment me contacter ?</summary><p>Sur <a href={LINKS.linkedin}>LinkedIn</a> ou via <a href={LINKS.github}>GitHub</a>. Une courte description de votre idée, de vos données ou de votre question suffit.</p></details>
+    </section>
+  </main>
+</Base>

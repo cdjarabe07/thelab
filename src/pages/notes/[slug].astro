@@ -1,0 +1,104 @@
+---
+import { getEntry, render } from 'astro:content';
+import 'katex/dist/katex.min.css';
+import Base from '../../layouts/Base.astro';
+import NoteRow from '../../components/NoteRow.astro';
+import Tags from '../../components/Tags.astro';
+import { NOTE_TYPES, SITE } from '../../data/lab';
+import { formatDate, getDomains, getNotes, isoDate, projectUrl, refIds, type Note } from '../../lib';
+
+export async function getStaticPaths() {
+  return (await getNotes()).map((n) => ({ params: { slug: n.id }, props: { note: n } }));
+}
+
+const { note } = Astro.props as { note: Note };
+const d = note.data;
+const { Content, headings } = await render(note);
+const project = d.project ? await getEntry(d.project) : undefined;
+const related = (await getNotes()).filter((n) => n.id !== note.id && d.project && n.data.project?.id === d.project.id);
+const domainMap = await getDomains();
+const url = new URL(Astro.url.pathname, Astro.site).href;
+
+// Référence citable
+const year = (d.date ?? new Date()).getFullYear();
+const [first, ...rest] = SITE.author.split(' ');
+const citation = `${rest.join(' ')}, ${first[0]}. (${year}). ${d.title}. TheLab${d.draft ? ' [brouillon]' : ''}. ${url}`;
+const bibtex = `@misc{djarabe${year}${note.id.replace(/-/g, '').slice(0, 16)},
+  author       = {${rest.join(' ')}, ${first}},
+  title        = {${d.title}},
+  year         = {${year}},
+  howpublished = {TheLab, \\url{${url}}},
+  note         = {${NOTE_TYPES[d.type].name}${d.draft ? ', brouillon' : ''}}
+}`;
+
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: d.title,
+  description: d.excerpt,
+  url,
+  author: { '@type': 'Person', name: SITE.author },
+  publisher: { '@type': 'Organization', name: 'TheLab' },
+  ...(d.date && { datePublished: isoDate(d.date) }),
+  keywords: refIds(d.domains).map((id) => domainMap.get(id)!.data.name).join(', '),
+  ...(project && { isPartOf: { '@type': 'CreativeWork', name: project.data.title } }),
+  creativeWorkStatus: d.draft ? 'Draft' : 'Published',
+  inLanguage: 'fr',
+};
+---
+<Base page="notes" title={d.title} description={d.excerpt} type="article" jsonld={jsonld} searchable>
+  <div class="frame">
+    <header class="page-head">
+      <div class="kicker">
+        <a class="label" href="/notes/">← Notes</a>
+        <a class="tag type" href={`/notes/?type=${d.type}`}>{NOTE_TYPES[d.type].name}</a>
+        <span class:list={['status', { draft: d.draft }]}>{d.draft ? 'Brouillon' : formatDate(d.date)}</span>
+        <span class="meta">{d.minutes} minutes</span>
+      </div>
+      <h1 class="title">{d.title}</h1>
+      <p class="lede">{d.excerpt}</p>
+      <div class="actions">
+        <span class="meta">{SITE.author}{project && <> · Projet : <a href={projectUrl(project) ?? '/projects/'}>{project.data.title}</a></>}</span>
+      </div>
+    </header>
+
+    <div class="doc" style="border-top:1px solid var(--line)">
+      <aside class="toc" data-pagefind-ignore>
+        <div class="label">Dans cette note</div>
+        <ol>
+          {headings.filter((h) => h.depth === 2).map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
+          <li><a href="#citer">Citer cette note</a></li>
+        </ol>
+        {d.domains.length > 0 && <>
+          <div class="label" style="margin-top:32px">Domaines</div>
+          <div style="margin-top:8px"><Tags domains={d.domains} /></div>
+        </>}
+      </aside>
+      <article class="prose">
+        <Content />
+        <section class="cite" id="citer" data-pagefind-ignore>
+          <div class="label">Citer cette note</div>
+          <p>{citation}</p>
+          <pre><code>{bibtex}</code></pre>
+          <button class="btn ghost" type="button" data-copy={bibtex}>Copier le BibTeX</button>
+        </section>
+      </article>
+    </div>
+
+    {related.length > 0 && (
+      <section class="section tight" data-pagefind-ignore>
+        <div class="list-head"><div class="label arrow">Autres notes du projet</div><a class="link-small" href="/notes/">Toutes les notes [ -&gt; ]</a></div>
+        {related.map((n) => <NoteRow note={n} showProject={false} />)}
+      </section>
+    )}
+  </div>
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) =>
+    b.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(b.dataset.copy!); b.textContent = 'Copié ✓'; }
+      catch { b.textContent = 'Copie impossible'; }
+      setTimeout(() => (b.textContent = 'Copier le BibTeX'), 2000);
+    }));
+</script>

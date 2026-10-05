@@ -1,0 +1,38 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import ResourceRow from '../components/ResourceRow.astro';
+
+const resources = await getCollection('resources');
+---
+<Base page="resources" title="Resources" description="Ce que TheLab produit et qui peut être réutilisé : données, notebooks, code, outils et lectures.">
+  <div class="frame">
+    <section class="hero" style="padding-bottom:48px">
+      <h1><span>Resources</span></h1>
+      <div class="hero-meta">
+        <p class="hero-intro"><span>Ce que le lab produit et qui peut être réutilisé : données, notebooks, code, outils, et les lectures qui ont compté.</span></p>
+      </div>
+    </section>
+
+    <main>
+      <section>
+        <div class="list-head" style="border-bottom:0"><div class="label arrow">Types de ressources</div></div>
+        <div class="types">
+          <div><h4>Données</h4><p>Jeux de données nettoyés ou exportés, avec leur source et leur licence.</p></div>
+          <div><h4>Notebooks</h4><p>Analyses reproductibles, prêtes à être exécutées.</p></div>
+          <div><h4>Code</h4><p>Dépôts, pipelines et petites bibliothèques issus des projets.</p></div>
+          <div><h4>Outils</h4><p>Applications et dashboards utilisables en ligne.</p></div>
+          <div><h4>Lectures</h4><p>Papiers, livres et cours qui ont nourri le travail du lab.</p></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="list-head">
+          <div class="label arrow">Toutes les ressources</div>
+          <span class="count">{resources.length}</span>
+        </div>
+        {resources.map((r) => <ResourceRow resource={r} />)}
+      </section>
+    </main>
+  </div>
+</Base>

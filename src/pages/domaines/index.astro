@@ -1,0 +1,45 @@
+---
+import Base from '../../layouts/Base.astro';
+import { domainIndex } from '../../domains';
+import { domainUrl } from '../../lib';
+
+const all = (await domainIndex()).filter((x) => x.total > 0);
+const active = all.filter((x) => x.items.projects.length || x.items.notes.length).sort((a, b) => b.total - a.total);
+const planned = all.filter((x) => !x.items.projects.length && !x.items.notes.length).sort((a, b) => b.total - a.total);
+---
+<Base title="Domaines" description="Les domaines de TheLab : chaque page rassemble les projets, notes, pistes et ressources d'un domaine.">
+  <div class="frame">
+    <section class="hero" style="padding-bottom:48px">
+      <h1><span>Domaines</span></h1>
+      <div class="hero-meta">
+        <p class="hero-intro"><span>Les projets du lab traversent plusieurs domaines à la fois. Chaque page de domaine rassemble tout ce qui s'y rapporte : projets, notes, pistes de la roadmap, travaux et ressources.</span></p>
+      </div>
+    </section>
+
+    <main>
+      <section>
+        <div class="list-head" style="border-bottom:0"><div class="label arrow">Pratiqués dans les projets et les notes</div><span class="count">{active.length}</span></div>
+        <div class="domain-grid">
+          {active.map(({ domain, items }) => (
+            <a href={domainUrl(domain.id)}>
+              <h4>{domain.data.name}<span class="count">· {items.projects.length} projet{items.projects.length > 1 ? 's' : ''}, {items.notes.length} note{items.notes.length > 1 ? 's' : ''}</span></h4>
+              <p>{domain.data.desc}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="list-head" style="border-bottom:0"><div class="label arrow">Sur la roadmap et dans les autres travaux</div><span class="count">{planned.length}</span></div>
+        <div class="domain-grid">
+          {planned.map(({ domain, items }) => (
+            <a href={domainUrl(domain.id)}>
+              <h4>{domain.data.name}<span class="count">· {items.roadmap.length} piste{items.roadmap.length > 1 ? 's' : ''}</span></h4>
+              <p>{domain.data.desc}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+    </main>
+  </div>
+</Base>

@@ -1,0 +1,48 @@
+---
+import Base from '../../layouts/Base.astro';
+import Filters from '../../components/Filters.astro';
+import NoteRow from '../../components/NoteRow.astro';
+import { NOTE_TYPES } from '../../data/lab';
+import { getActiveProjects, getDomains, getNotes, refIds } from '../../lib';
+
+const notes = await getNotes();
+const projects = (await getActiveProjects()).filter((p) => notes.some((n) => n.data.project?.id === p.id));
+const domainMap = await getDomains();
+const domainOptions = [...new Set(notes.flatMap((n) => refIds(n.data.domains)))]
+  .map((id) => [id, domainMap.get(id)!.data.name] as [string, string])
+  .sort((a, b) => a[1].localeCompare(b[1]));
+const countOf = (k: string) => notes.filter((n) => n.data.type === k).length;
+---
+<Base page="notes" title="Notes" description="Le carnet de laboratoire de TheLab : journaux de projet, expérimentations, apprentissages, reproductions, post-mortems et réflexions.">
+  <div class="frame">
+    <section class="hero" style="padding-bottom:48px">
+      <h1><span>Notes</span></h1>
+      <div class="hero-meta">
+        <p class="hero-intro"><span>Le carnet de laboratoire de <span class="tl">TheLab</span>. Les notes documentent le travail en train de se faire : ce qui a été essayé, ce qui a marché, ce qui a échoué. Elles sont plus courtes et plus libres que les publications. <a href="/notes/rss.xml">S'abonner par RSS</a>.</span></p>
+      </div>
+    </section>
+
+    <section>
+      <div class="list-head" style="border-bottom:0"><div class="label arrow">Six types de notes</div></div>
+      <div class="types">
+        {Object.entries(NOTE_TYPES).map(([k, v]) => (
+          <div><h4>{v.name} <span class="count muted">· {countOf(k)}</span></h4><p>{v.desc}</p></div>
+        ))}
+      </div>
+    </section>
+
+    <main class="section" id="carnet">
+      <Filters scope="carnet" groups={[
+        ['type', 'Type', Object.entries(NOTE_TYPES).filter(([k]) => countOf(k)).map(([k, v]) => [k, v.name])],
+        ['project', 'Projet', projects.map((p) => [p.id, p.data.title])],
+        ['domains', 'Domaines', domainOptions, true],
+      ]} />
+      <div class="list-head">
+        <div class="label arrow">Toutes les notes</div>
+        <span class="count" data-count="liste-notes">{notes.length} / {notes.length}</span>
+      </div>
+      <div id="liste-notes">{notes.map((n) => <NoteRow note={n} />)}</div>
+      <p class="empty" data-empty="liste-notes" hidden>Pas encore de note ici. Le carnet se remplit au rythme des projets.</p>
+    </main>
+  </div>
+</Base>

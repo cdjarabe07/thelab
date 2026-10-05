@@ -1,0 +1,46 @@
+---
+import Base from '../layouts/Base.astro';
+import Filters from '../components/Filters.astro';
+import RoadmapRow from '../components/RoadmapRow.astro';
+import { LEVELS } from '../data/lab';
+import { getDomains, getRoadmap, refIds } from '../lib';
+
+const roadmap = await getRoadmap();
+const domainMap = await getDomains();
+const domainOptions = [...new Set(roadmap.flatMap((r) => refIds(r.data.domains)))]
+  .map((id) => [id, domainMap.get(id)!.data.name] as [string, string])
+  .sort((a, b) => a[1].localeCompare(b[1]));
+---
+<Base page="projects" title="Roadmap" description="La roadmap de TheLab : une banque de problèmes classés par niveau, de la data science aux projets de recherche.">
+  <div class="frame">
+    <section class="hero" style="padding-bottom:48px">
+      <h1><span>Roadmap</span></h1>
+      <div class="hero-meta">
+        <p class="hero-intro"><span>Une banque de problèmes, pas une checklist. Ces {roadmap.length} pistes sont planifiées ; elles rejoignent les <a href="/projects/">projets</a> quand le travail démarre.</span></p>
+      </div>
+    </section>
+
+    <main class="roadmap" id="roadmap">
+      <Filters scope="roadmap" groups={[
+        ['domains', 'Domaines', domainOptions, true],
+        ['level', 'Niveau', Object.entries(LEVELS).map(([k, l]) => [k, `${k} · ${l.name}`])],
+      ]} />
+      <div class="list-head">
+        <div class="label arrow">Toutes les pistes</div>
+        <span class="count" data-count="pistes">{roadmap.length} / {roadmap.length}</span>
+      </div>
+      <div id="pistes">
+        {Object.entries(LEVELS).map(([k, l]) => {
+          const items = roadmap.filter((r) => r.data.level === k);
+          return items.length > 0 && (
+            <details data-group>
+              <summary><span class="meta">Niveau {k}</span><h3>{l.name}</h3><span class="count">{items.length} piste{items.length > 1 ? 's' : ''}</span></summary>
+              {items.map((r) => <RoadmapRow item={r} />)}
+            </details>
+          );
+        })}
+      </div>
+      <p class="empty" data-empty="pistes" hidden>Aucune piste ne correspond à ces filtres.</p>
+    </main>
+  </div>
+</Base>

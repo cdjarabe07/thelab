@@ -1,0 +1,62 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Filters from '../../components/Filters.astro';
+import ProjectRow from '../../components/ProjectRow.astro';
+import RoadmapRow from '../../components/RoadmapRow.astro';
+import WorkRow from '../../components/WorkRow.astro';
+import { LEVELS, LINKS } from '../../data/lab';
+import { getActiveProjects, getDomains, getRoadmap, refIds } from '../../lib';
+
+const projects = await getActiveProjects();
+const roadmap = await getRoadmap();
+const next = roadmap.filter((r) => r.data.next);
+const works = await getCollection('works');
+const domainMap = await getDomains();
+const used = [...new Set([...projects, ...next].flatMap((p) => refIds(p.data.domains)))];
+const domainOptions = used.map((id) => [id, domainMap.get(id)!.data.name] as [string, string]).sort((a, b) => a[1].localeCompare(b[1]));
+---
+<Base page="projects" title="Projects" description="Les projets de TheLab : études de cas complètes en data science et en IA, prochains chantiers et autres travaux.">
+  <div class="frame">
+    <section class="hero" style="padding-bottom:48px">
+      <h1><span>Projects</span></h1>
+      <div class="hero-meta">
+        <p class="hero-intro"><span>Des études de cas complètes, construites autour d'un problème réel. Un projet traverse souvent plusieurs domaines : chaque tag mène à la <a href="/domaines/">page du domaine</a>.</span></p>
+      </div>
+    </section>
+
+    <main id="liste">
+      <Filters scope="liste" groups={[
+        ['domains', 'Domaines', domainOptions, true],
+        ['level', 'Niveau', Object.entries(LEVELS).map(([k, l]) => [k, `${k} · ${l.name}`])],
+      ]} />
+
+      <div class="list-head">
+        <div class="label arrow">Projets</div>
+        <span class="count" data-count="projets">{projects.length} / {projects.length}</span>
+      </div>
+      <div id="projets">{projects.map((p) => <ProjectRow project={p} />)}</div>
+      <p class="empty" data-empty="projets" hidden>Aucun projet ne correspond à ces filtres pour l'instant.</p>
+
+      <section class="section" style="padding-bottom:0">
+        <div class="list-head">
+          <div class="label arrow">Prochains chantiers</div>
+          <a class="link-small" href="/roadmap/">Roadmap complète · {roadmap.length} pistes [ -&gt; ]</a>
+        </div>
+        <p class="list-intro">Les projets planifiés pour la suite. Ils rejoignent la liste ci-dessus quand le travail démarre.</p>
+        <div id="chantiers">{next.map((r) => <RoadmapRow item={r} />)}</div>
+        <p class="empty" data-empty="chantiers" hidden>Aucun prochain chantier ne correspond à ces filtres.</p>
+        <span hidden data-count="chantiers"></span>
+      </section>
+    </main>
+
+    <section class="section">
+      <div class="list-head">
+        <div class="label arrow">Autres travaux</div>
+        <a class="link-small" href={LINKS.github}>Tout sur GitHub [ -&gt; ]</a>
+      </div>
+      <p class="list-intro">Stages, compétitions, analyses et exercices : le travail d'apprentissage qui sert de fondation aux projets du lab.</p>
+      {works.map((w) => <WorkRow work={w} />)}
+    </section>
+  </div>
+</Base>

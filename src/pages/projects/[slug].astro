@@ -1,0 +1,97 @@
+---
+import { getEntry, render } from 'astro:content';
+import 'katex/dist/katex.min.css';
+import Base from '../../layouts/Base.astro';
+import DakarMap from '../../components/DakarMap.astro';
+import NoteRow from '../../components/NoteRow.astro';
+import Tags from '../../components/Tags.astro';
+import { LEVELS, SITE, STATUS } from '../../data/lab';
+import { getDomains, getNotes, getProjects, hasPage, isoDate, refIds, type Project } from '../../lib';
+
+export async function getStaticPaths() {
+  return (await getProjects()).filter(hasPage).map((p) => ({ params: { slug: p.id }, props: { project: p } }));
+}
+
+const { project } = Astro.props as { project: Project };
+const d = project.data;
+const { Content, headings } = await render(project);
+const related = (await getNotes()).filter((n) => n.data.project?.id === project.id);
+const parent = d.parent ? await getEntry(d.parent) : undefined;
+const toc = headings.filter((h) => h.depth === 2);
+const [primary, ...secondary] = d.links;
+const domainMap = await getDomains();
+
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: d.title,
+  abstract: d.summary,
+  url: new URL(Astro.url.pathname, Astro.site).href,
+  author: { '@type': 'Person', name: SITE.author },
+  keywords: refIds(d.domains).map((id) => domainMap.get(id)!.data.name).concat(d.techniques).join(', '),
+  creativeWorkStatus: STATUS[d.status],
+  ...(d.started && { dateCreated: isoDate(d.started) }),
+  ...(d.updated && { dateModified: isoDate(d.updated) }),
+  ...(d.links.length && { sameAs: d.links.map(([, h]) => h) }),
+  inLanguage: 'fr',
+};
+---
+<Base page="projects" title={d.title} description={d.summary} type="article" jsonld={jsonld} searchable>
+  <div class="frame">
+    <header class="page-head">
+      <div class="kicker">
+        <a class="label" href="/projects/">← Projects</a>
+        <span class="status live">{STATUS[d.status]}</span>
+        {d.version && <span class="meta">{d.version}</span>}
+        <span class="meta">Niveau {d.level} · {LEVELS[d.level].name}</span>
+        {parent && <span class="meta">Programme : <a href="/roadmap/">{parent.data.title}</a></span>}
+      </div>
+      <h1 class="title">{d.title}</h1>
+      <p class="lede">{d.lede ?? d.summary}</p>
+      {d.links.length > 0 && (
+        <div class="actions">
+          <a class="btn" href={primary[1]}>{primary[0]} ↗</a>
+          {secondary.map(([l, h]) => <a class="btn ghost" href={h}>{l} ↗</a>)}
+        </div>
+      )}
+    </header>
+
+    <div class="facts">
+      {d.facts.map(([k, v]) => <div><div class="label">{k}</div><div class="v">{v}</div></div>)}
+      <div><div class="label">Domaines</div><div class="v"><Tags domains={d.domains} /></div></div>
+    </div>
+
+    {d.cover && (
+      <figure class="figure" style="margin-top:clamp(32px,4vw,56px)">
+        <img src={d.cover.src} alt={d.cover.alt}>
+        {d.cover.caption && <figcaption>{d.cover.caption}</figcaption>}
+      </figure>
+    )}
+  </div>
+
+  {d.band && <DakarMap label={d.band.label} title={d.band.title} text={d.band.text} />}
+
+  <div class="frame">
+    <div class="doc">
+      <nav class="toc" aria-label="Sommaire" data-pagefind-ignore>
+        <div class="label">Sommaire</div>
+        <ol>
+          {toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
+          {related.length > 0 && <li><a href="#notes-liees">Notes liées</a></li>}
+        </ol>
+        {d.techniques.length > 0 && <>
+          <div class="label" style="margin-top:32px">Techniques</div>
+          <div style="margin-top:8px"><Tags labels={d.techniques} /></div>
+        </>}
+      </nav>
+
+      <article class="prose">
+        <Content />
+        {related.length > 0 && <>
+          <h2 id="notes-liees">Notes liées</h2>
+          <div class="related" data-pagefind-ignore>{related.map((n) => <NoteRow note={n} showProject={false} />)}</div>
+        </>}
+      </article>
+    </div>
+  </div>
+</Base>

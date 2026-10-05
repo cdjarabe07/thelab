@@ -1,0 +1,82 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProjectRow from '../../components/ProjectRow.astro';
+import NoteRow from '../../components/NoteRow.astro';
+import RoadmapRow from '../../components/RoadmapRow.astro';
+import WorkRow from '../../components/WorkRow.astro';
+import ResourceRow from '../../components/ResourceRow.astro';
+import { domainIndex } from '../../domains';
+import { domainUrl, getDomains } from '../../lib';
+
+export async function getStaticPaths() {
+  return (await domainIndex()).filter((x) => x.total > 0).map((x) => ({ params: { id: x.domain.id }, props: x }));
+}
+type Entry = Awaited<ReturnType<typeof domainIndex>>[number];
+const { domain, items, neighbours } = Astro.props as Entry;
+const names = await getDomains();
+const plural = (n: number, w: string) => `${n} ${w}${n > 1 ? 's' : ''}`;
+---
+<Base title={domain.data.name} description={`${domain.data.name} dans TheLab : ${domain.data.desc}`} searchable>
+  <div class="frame">
+    <section class="hero" style="padding-bottom:48px">
+      <div class="kicker" style="margin-bottom:24px"><a class="label" href="/domaines/" style="text-decoration:none">← Domaines</a></div>
+      <h1><span class="tl">{domain.data.name}</span></h1>
+      <div class="hero-meta">
+        <div class="hero-intro">
+          <span>
+            {domain.data.desc}
+            <span class="domain-stats">
+              <span>{plural(items.projects.length, 'projet')}</span>
+              <span>{plural(items.notes.length, 'note')}</span>
+              <span>{plural(items.roadmap.length, 'piste')}</span>
+              {items.works.length > 0 && <span>{plural(items.works.length, 'travail')}</span>}
+              {items.resources.length > 0 && <span>{plural(items.resources.length, 'ressource')}</span>}
+            </span>
+          </span>
+        </div>
+        {neighbours.length > 0 && (
+          <div class="fact" style="grid-column: span 2">
+            <div class="label">Souvent croisé avec</div>
+            <div class="tags" style="margin-top:8px">
+              {neighbours.map(([id, n]) => <a class="tag" href={domainUrl(id)}>{names.get(id)!.data.name} · {n}</a>)}
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+
+    <main>
+      {items.projects.length > 0 && (
+        <section>
+          <div class="list-head"><div class="label arrow">Projets</div><span class="count">{items.projects.length}</span></div>
+          {items.projects.map((p) => <ProjectRow project={p} />)}
+        </section>
+      )}
+      {items.notes.length > 0 && (
+        <section class="section" style="padding-bottom:0">
+          <div class="list-head"><div class="label arrow">Notes</div><span class="count">{items.notes.length}</span></div>
+          {items.notes.map((n) => <NoteRow note={n} />)}
+        </section>
+      )}
+      {items.resources.length > 0 && (
+        <section class="section" style="padding-bottom:0">
+          <div class="list-head"><div class="label arrow">Ressources</div><span class="count">{items.resources.length}</span></div>
+          {items.resources.map((r) => <ResourceRow resource={r} />)}
+        </section>
+      )}
+      {items.roadmap.length > 0 && (
+        <section class="section" style="padding-bottom:0">
+          <div class="list-head"><div class="label arrow">Sur la roadmap</div><span class="count">{items.roadmap.length}</span></div>
+          {items.roadmap.map((r) => <RoadmapRow item={r} />)}
+        </section>
+      )}
+      {items.works.length > 0 && (
+        <section class="section" style="padding-bottom:0">
+          <div class="list-head"><div class="label arrow">Autres travaux</div><span class="count">{items.works.length}</span></div>
+          {items.works.map((w) => <WorkRow work={w} />)}
+        </section>
+      )}
+      <div class="section"></div>
+    </main>
+  </div>
+</Base>

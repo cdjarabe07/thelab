@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base page="search" title="Recherche" description="Rechercher dans les projets, les notes et les ressources de TheLab." noindex>
+  <link slot="head" rel="stylesheet" href="/pagefind/pagefind-ui.css">
+  <div class="frame">
+    <section class="hero" style="padding-bottom:32px">
+      <h1><span>Recherche</span></h1>
+      <div class="hero-meta">
+        <p class="hero-intro"><span>Dans tous les projets, notes et ressources du lab. L'index est construit au moment du build : la recherche fonctionne sans serveur. Raccourci : <kbd>/</kbd> depuis n'importe quelle page.</span></p>
+      </div>
+    </section>
+    <main class="search-box">
+      <div id="search"></div>
+      <noscript><p>La recherche nécessite JavaScript.</p></noscript>
+    </main>
+  </div>
+</Base>
+
+<script is:inline>
+  // Pagefind n'existe qu'après `npm run build` (il indexe dist/). En `npm run dev`, un message l'explique.
+  const s = document.createElement('script');
+  s.src = '/pagefind/pagefind-ui.js';
+  s.onload = () => {
+    // eslint-disable-next-line no-undef
+    new PagefindUI({
+      element: '#search', showSubResults: true, showImages: false, autofocus: true,
+      translations: { placeholder: 'Rechercher dans TheLab', zero_results: 'Aucun résultat pour [SEARCH_TERM]' },
+    });
+    const q = new URLSearchParams(location.search).get('q');
+    if (q) setTimeout(() => { const i = document.querySelector('.pagefind-ui__search-input'); if (i) { i.value = q; i.dispatchEvent(new Event('input')); } }, 50);
+  };
+  s.onerror = () => {
+    document.getElementById('search').innerHTML = "<p class='empty'>L'index de recherche n'est généré qu'au build (npm run build, puis npm run preview).</p>";
+  };
+  document.body.appendChild(s);
+</script>
