@@ -4,7 +4,7 @@ type: "postmortem"
 excerpt: "Un SARIMAX reliant prix du pétrole et inflation a été testé. Avec moins de 30 années de données annuelles, le lien n'est pas statistiquement fiable : la fonctionnalité attend."
 draft: true
 minutes: "3–4"
-project: "observatoire-uemoa"
+projects: ["observatoire-uemoa"]
 domains: ["time-series", "decision-intelligence"]
 order: 5
 ---

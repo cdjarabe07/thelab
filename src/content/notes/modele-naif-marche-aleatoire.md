@@ -4,7 +4,7 @@ type: "experience"
 excerpt: "Sur le taux de change, le meilleur SARIMA obtient une MAE de 28,45 contre 28,47 pour la dernière valeur connue : aucun gain réel. L'observatoire affiche donc le modèle naïf, et le dit."
 draft: true
 minutes: "5–7"
-project: "observatoire-uemoa"
+projects: ["observatoire-uemoa"]
 domains: ["time-series", "data-science"]
 order: 4
 ---

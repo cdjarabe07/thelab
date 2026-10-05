@@ -1,5 +1,5 @@
 ---
-import { getEntry, render } from 'astro:content';
+import { getEntries, render } from 'astro:content';
 import 'katex/dist/katex.min.css';
 import Base from '../../layouts/Base.astro';
 import NoteRow from '../../components/NoteRow.astro';
@@ -16,8 +16,10 @@ export async function getStaticPaths() {
 const { note } = Astro.props as { note: Note };
 const d = note.data;
 const { Content, headings } = await render(note);
-const project = d.project ? await getEntry(d.project) : undefined;
-const related = (await getNotes()).filter((n) => n.id !== note.id && d.project && n.data.project?.id === d.project.id);
+const projects = await getEntries(d.projects);
+const mine = refIds(d.projects);
+// notes qui partagent au moins un projet avec celle-ci
+const related = (await getNotes()).filter((n) => n.id !== note.id && n.data.projects.some((p) => mine.includes(p.id)));
 const domainMap = await getDomains();
 const url = new URL(Astro.url.pathname, Astro.site).href;
 
@@ -43,7 +45,7 @@ const jsonld = {
   publisher: { '@type': 'Organization', name: 'TheLab' },
   ...(d.date && { datePublished: isoDate(d.date) }),
   keywords: refIds(d.domains).map((id) => domainMap.get(id)!.data.name).join(', '),
-  ...(project && { isPartOf: { '@type': 'CreativeWork', name: project.data.title } }),
+  ...(projects.length && { isPartOf: projects.map((p) => ({ '@type': 'CreativeWork', name: p.data.title })) }),
   creativeWorkStatus: d.draft ? 'Draft' : 'Published',
   inLanguage: 'fr',
 };
@@ -60,7 +62,7 @@ const jsonld = {
       <h1 class="title">{d.title}</h1>
       <p class="lede">{d.excerpt}</p>
       <div class="actions">
-        <span class="meta">{SITE.author}{project && <> · Projet : <a href={projectUrl(project) ?? '/projects/'}>{project.data.title}</a></>}</span>
+        <span class="meta">{SITE.author}{projects.length > 0 && <> · {projects.length > 1 ? 'Projets' : 'Projet'} : {projects.map((p, i) => <>{i > 0 && ' · '}<a href={projectUrl(p) ?? '/projects/'}>{p.data.title}</a></>)}</>}</span>
       </div>
     </header>
 
@@ -92,7 +94,7 @@ const jsonld = {
 
     {related.length > 0 && (
       <section class="section tight" data-pagefind-ignore>
-        <div class="list-head"><div class="label arrow">Autres notes du projet</div><a class="link-small" href="/notes/">Toutes les notes [ -&gt; ]</a></div>
+        <div class="list-head"><div class="label arrow">Autres notes {projects.length > 1 ? 'de ces projets' : 'du projet'}</div><a class="link-small" href="/notes/">Toutes les notes [ -&gt; ]</a></div>
         {related.map((n) => <NoteRow note={n} showProject={false} />)}
       </section>
     )}

@@ -40,6 +40,24 @@ export const NOTE_TYPES: Record<string, { name: string; desc: string }> = {
   reflexion:     { name: "Réflexion",       desc: "Choix techniques, méthode, lectures, questions ouvertes." },
 };
 
+/** Types de ressources (page Resources), dans l'ordre d'affichage. */
+export const RESOURCE_KINDS: Record<string, { name: string; desc: string }> = {
+  donnees:   { name: "Données",   desc: "Jeux de données nettoyés ou exportés, avec leur source et leur licence." },
+  notebooks: { name: "Notebooks", desc: "Analyses reproductibles, prêtes à être exécutées." },
+  code:      { name: "Code",      desc: "Dépôts et pipelines issus des projets." },
+  outils:    { name: "Outils",    desc: "Applications et dashboards utilisables en ligne." },
+  lectures:  { name: "Lectures",  desc: "Papiers, livres et cours qui ont nourri le travail du lab." },
+};
+
+/** Formats de publication (page Publications). */
+export const PUBLICATION_FORMATS: Record<string, { name: string; desc: string }> = {
+  rapport:        { name: "Rapport technique",  desc: "La synthèse complète d'un projet : données, méthode, résultats, limites." },
+  "etude-de-cas": { name: "Étude de cas",       desc: "Un problème appliqué traité de bout en bout, rédigé pour être lu hors du lab." },
+  reproduction:   { name: "Reproduction",       desc: "Le compte rendu formel d'un papier reproduit, avec les écarts observés." },
+  article:        { name: "Article / preprint", desc: "Un travail de recherche original, soumis ou déposé." },
+  presentation:   { name: "Présentation",       desc: "Supports de talks, séminaires ou meetups." },
+};
+
 /**
  * Commentaires des notes (Giscus) : stockés dans les Discussions GitHub du dépôt, sans base de données.
  * Pour les activer : rendre le dépôt public, activer les Discussions, installer l'app giscus

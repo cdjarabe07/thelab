@@ -4,7 +4,7 @@ type: "experience"
 excerpt: "Le score combine trois indicateurs à poids égaux. En le recalculant sans le satellite, puis avec l'altitude seule, seules 13 communes gardent un rang stable. Ce que ça dit du score, et comment l'appli l'affiche."
 draft: true
 minutes: "5–7"
-project: "dakar-risque-inondation"
+projects: ["dakar-risque-inondation"]
 domains: ["data-science", "geospatial"]
 order: 2
 ---

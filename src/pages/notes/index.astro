@@ -7,19 +7,19 @@ import { NOTE_TYPES } from '../../data/lab';
 import { getActiveProjects, getDomains, getNotes, refIds } from '../../lib';
 
 const notes = await getNotes();
-const projects = (await getActiveProjects()).filter((p) => notes.some((n) => n.data.project?.id === p.id));
+const projects = (await getActiveProjects()).filter((p) => notes.some((n) => n.data.projects.some((r) => r.id === p.id)));
 const domainMap = await getDomains();
 const domainOptions = [...new Set(notes.flatMap((n) => refIds(n.data.domains)))]
   .map((id) => [id, domainMap.get(id)!.data.name] as [string, string])
   .sort((a, b) => a[1].localeCompare(b[1]));
 const countOf = (k: string) => notes.filter((n) => n.data.type === k).length;
 ---
-<Base page="notes" title="Notes" description="Le carnet de laboratoire de TheLab : journaux de projet, expérimentations, apprentissages, reproductions, post-mortems et réflexions.">
+<Base page="notes" title="Notes" description="Le carnet de laboratoire de TheLab : apprentissages, expérimentations, problèmes rencontrés, résultats intermédiaires, limites et décisions techniques liés aux projets.">
   <div class="frame">
     <section class="hero" style="padding-bottom:48px">
       <h1><span>Notes</span></h1>
       <div class="hero-meta">
-        <p class="hero-intro"><span>Le carnet de laboratoire de <span class="tl">TheLab</span>. Les notes documentent le travail en train de se faire : ce qui a été essayé, ce qui a marché, ce qui a échoué. Elles sont plus courtes et plus libres que les publications. <a href="/notes/rss.xml">S'abonner par RSS</a>.</span></p>
+        <p class="hero-intro"><span>Le carnet de laboratoire de <span class="tl">TheLab</span>, pas un blog. Chaque note documente un moment précis du travail sur un projet : un apprentissage, une expérimentation, un problème rencontré, un résultat intermédiaire, une limite, une décision technique. Plus courtes et plus libres que les publications. <a href="/notes/rss.xml">S'abonner par RSS</a>.</span></p>
       </div>
     </section>
 

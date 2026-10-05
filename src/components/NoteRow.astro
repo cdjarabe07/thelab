@@ -1,15 +1,15 @@
 ---
-import { getEntry } from 'astro:content';
+import { getEntries } from 'astro:content';
 import Tags from './Tags.astro';
 import { NOTE_TYPES } from '../data/lab';
 import { formatDate, noteUrl, projectUrl, refIds, type Note } from '../lib';
 interface Props { note: Note; showProject?: boolean }
 const { note: n, showProject = true } = Astro.props;
 const d = n.data;
-const project = d.project ? await getEntry(d.project) : undefined;
+const projects = await getEntries(d.projects);
 const url = noteUrl(n);
 ---
-<article class="row" data-filter data-type={d.type} data-project={d.project?.id ?? ''} data-domains={refIds(d.domains).join('|')}>
+<article class="row" data-filter data-type={d.type} data-project={refIds(d.projects).join('|')} data-domains={refIds(d.domains).join('|')}>
   <div class="meta">
     <div class:list={['status', { draft: d.draft }]}>{d.draft ? 'Brouillon' : formatDate(d.date)}</div>
     {d.minutes} minutes
@@ -17,8 +17,8 @@ const url = noteUrl(n);
   <div>
     <div class="tags" style="margin-bottom:8px"><a class="tag type" href={`/notes/?type=${d.type}`}>{NOTE_TYPES[d.type].name}</a></div>
     <h3><a href={url}>{d.title}</a></h3>
-    {showProject && project && (
-      <p class="meta" style="margin-top:8px">Projet : <a href={projectUrl(project) ?? '/projects/'}>{project.data.title}</a></p>
+    {showProject && projects.length > 0 && (
+      <p class="meta" style="margin-top:8px">{projects.length > 1 ? 'Projets' : 'Projet'} : {projects.map((p, i) => <>{i > 0 && ' · '}<a href={projectUrl(p) ?? '/projects/'}>{p.data.title}</a></>)}</p>
     )}
   </div>
   <div class="excerpt"><p>{d.excerpt} <a href={url}>Lire la suite.</a></p><Tags domains={d.domains} /></div>

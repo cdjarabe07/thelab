@@ -4,7 +4,7 @@ type: "journal"
 excerpt: "Coupure à 5 secondes, réponses pré-rédigées, refus du hors-sujet, 18 scénarios de test : comment l'assistant de l'observatoire reste utile même quand le modèle de langage ne répond pas."
 draft: true
 minutes: "4–6"
-project: "dakar-risque-inondation"
+projects: ["dakar-risque-inondation"]
 domains: ["llm", "web"]
 order: 3
 ---

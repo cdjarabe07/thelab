@@ -1,5 +1,8 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 
+// Fichiers de publication présents (hors modèle) : connus au build, sans interroger une collection vide.
+const publicationFiles = Object.keys(import.meta.glob('./content/publications/[!_]*.md'));
+
 export type Project = CollectionEntry<'projects'>;
 export type Note = CollectionEntry<'notes'>;
 export type Domain = CollectionEntry<'domains'>;
@@ -29,6 +32,10 @@ export async function getNotes() {
   return (await getCollection('notes')).sort((a, b) =>
     (b.data.date?.getTime() ?? 0) - (a.data.date?.getTime() ?? 0) || byOrder(a, b));
 }
+export async function getPublications() {
+  if (!publicationFiles.length) return [];
+  return (await getCollection('publications')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+}
 export async function getDomains() {
   const all = await getCollection('domains');
   return new Map(all.map((d) => [d.id, d]));
@@ -53,7 +60,7 @@ export const isoDate = (d?: Date) => (d ? d.toISOString().slice(0, 10) : '');
 let integrity: Promise<void> | undefined;
 export function assertIntegrity() {
   return (integrity ??= (async () => {
-    const cols = ['domains', 'projects', 'notes', 'works', 'resources'] as const;
+    const cols = ['domains', 'projects', 'notes', 'works', 'resources', ...(publicationFiles.length ? ['publications'] as const : [])] as const;
     const all = Object.fromEntries(await Promise.all(cols.map(async (c) => [c, await getCollection(c)]))) as Record<string, { id: string; data: Record<string, unknown> }[]>;
     const exists = (col: string, id: string) => all[col].some((e) => e.id === id);
     const problems: string[] = [];

@@ -4,7 +4,7 @@ type: "apprentissage"
 excerpt: "Pikine, Thiaroye, Guinaw Rail et Médina ressortent à 0 % d'eau stagnante après les fortes pluies. Ce n'est pas une absence d'inondation : c'est une limite physique du radar Sentinel-1 en bâti dense."
 draft: true
 minutes: "5–6"
-project: "dakar-risque-inondation"
+projects: ["dakar-risque-inondation"]
 domains: ["earth-observation", "geospatial"]
 order: 1
 ---

@@ -15,7 +15,7 @@ export async function getStaticPaths() {
 const { project } = Astro.props as { project: Project };
 const d = project.data;
 const { Content, headings } = await render(project);
-const related = (await getNotes()).filter((n) => n.data.project?.id === project.id);
+const related = (await getNotes()).filter((n) => n.data.projects.some((r) => r.id === project.id));
 const parent = d.parent ? await getEntry(d.parent) : undefined;
 const toc = headings.filter((h) => h.depth === 2);
 const [primary, ...secondary] = d.links;

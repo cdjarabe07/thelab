@@ -1,11 +1,15 @@
 import { defineCollection, reference } from 'astro:content';
+import { readdirSync } from 'node:fs';
 import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { PUBLICATION_FORMATS, RESOURCE_KINDS } from './data/lab';
+
+const keys = <T extends Record<string, unknown>>(o: T) => Object.keys(o) as [keyof T & string, ...(keyof T & string)[]];
 
 /*
  * Modèle de contenu de TheLab.
  *
- *   domains ◄──────────── projects ◄──── notes
+ *   domains ◄──────────── projects ◄──── notes (un ou plusieurs projets)
  *      ▲  ▲                  │  ▲
  *      │  └── works          │  └── parent (programme : Dakar → Smart City)
  *      └───── resources ─────┘
@@ -28,7 +32,8 @@ const domains = defineCollection({
 //   termine  → projet clos
 // Une piste devient un projet en changeant `status` et en écrivant la fiche sous le front matter.
 const projects = defineCollection({
-  loader: glob({ pattern: '*.md', base: './src/content/projects' }),
+  // Les fichiers commençant par « _ » (ex. _modele.md) sont des modèles : ils ne sont pas publiés.
+  loader: glob({ pattern: '[!_]*.md', base: './src/content/projects' }),
   schema: z.object({
     title: z.string(),
     summary: z.string(),
@@ -52,7 +57,7 @@ const projects = defineCollection({
 });
 
 const notes = defineCollection({
-  loader: glob({ pattern: '*.md', base: './src/content/notes' }),
+  loader: glob({ pattern: '[!_]*.md', base: './src/content/notes' }),
   schema: z.object({
     title: z.string(),
     type: z.enum(['journal', 'experience', 'apprentissage', 'reproduction', 'postmortem', 'reflexion']),
@@ -60,7 +65,7 @@ const notes = defineCollection({
     date: z.coerce.date().optional(),   // obligatoire pour publier (voir le contrôle plus bas)
     draft: z.boolean().default(true),
     minutes: z.string(),
-    project: reference('projects').optional(),
+    projects: z.array(reference('projects')).default([]),   // une note peut concerner plusieurs projets
     domains: domainRefs,
     order: z.number().default(99),
   }).refine((n) => n.draft || n.date, { message: 'Une note publiée (draft: false) doit avoir une date.' }),
@@ -74,11 +79,30 @@ const works = defineCollection({
 const resources = defineCollection({
   loader: file('src/content/resources.yaml'),
   schema: z.object({
-    title: z.string(), kind: z.string(), url: z.url(), desc: z.string(),
+    title: z.string(), kind: z.enum(keys(RESOURCE_KINDS)), url: z.url(), desc: z.string(),
     format: z.string().optional(), licence: z.string().optional(),
     project: reference('projects').optional(),
     domains: domainRefs,
   }),
 });
 
-export const collections = { domains, projects, notes, works, resources };
+// Publications : travaux formels (rapport technique, étude de cas, reproduction, article, présentation).
+// Vide pour l'instant ; une publication = un fichier Markdown dans src/content/publications/.
+// Tant que le dossier ne contient que le modèle, un chargeur vide évite les avertissements d'Astro.
+export const publicationFiles = readdirSync('./src/content/publications').filter((f) => f.endsWith('.md') && !f.startsWith('_'));
+const publications = defineCollection({
+  loader: publicationFiles.length ? glob({ pattern: '[!_]*.md', base: './src/content/publications' }) : async () => [],
+  schema: z.object({
+    title: z.string(),
+    format: z.enum(keys(PUBLICATION_FORMATS)),
+    date: z.coerce.date(),
+    abstract: z.string(),
+    authors: z.array(z.string()).default(['Caleb Djarabé']),
+    projects: z.array(reference('projects')).default([]),
+    domains: domainRefs,
+    links: z.array(z.tuple([z.string(), z.url()])).default([]),   // PDF, DOI, dépôt, support…
+    citation: z.string().optional(),
+  }),
+});
+
+export const collections = { domains, projects, notes, works, resources, publications };
