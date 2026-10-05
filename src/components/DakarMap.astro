@@ -1,0 +1,19 @@
+---
+// Carte des 53 communes (générée depuis score_risque_communes.geojson), insérée en SVG pour garder les infobulles.
+import svg from '../assets/dakar-risque.svg?raw';
+interface Props { label: string; title: string; text: string; link?: string }
+const { label, title, text, link } = Astro.props;
+const legend: [string, string][] = [['#efe3bf', 'Très élevé'], ['#c9b07a', 'Élevé'], ['#9a7a72', 'Moyen'], ['#74406a', 'Faible'], ['#52284c', 'Très faible']];
+---
+<section class="figure-band" aria-label={title}>
+  <div class="frame">
+    <div>
+      <div class="label">{label}</div>
+      <h2>{title}</h2>
+      <p>{text}</p>
+      <div class="legend" aria-label="Légende">{legend.map(([c, l]) => <span><i style={`background:${c}`}></i>{l}</span>)}</div>
+      {link && <a class="link-small" href={link}>Voir le projet [ -&gt; ]</a>}
+    </div>
+    <div class="map" set:html={svg} />
+  </div>
+</section>

@@ -1,0 +1,24 @@
+---
+import Tags from './Tags.astro';
+import { getChildren, projectUrl, refIds, type Project } from '../lib';
+interface Props { item: Project }
+const { item: p } = Astro.props;
+const d = p.data;
+const children = await getChildren(p);
+---
+<article class="row compact" data-filter data-level={d.level} data-domains={refIds(d.domains).join('|')}>
+  <div class="meta">
+    {children.length > 0 ? <span class="status live">Commencé</span> : d.flag ? 'Projet phare' : 'Planifié'}
+  </div>
+  <div>
+    <h3>{d.title}</h3>
+    <p>{d.summary}</p>
+    {children.length > 0 && (
+      <p class="meta" style="margin-top:8px">
+        {children.length > 1 ? 'Chantiers lancés' : 'Chantier lancé'} :
+        {children.map((c, i) => <>{i > 0 && ' · '}<a href={projectUrl(c) ?? '/projects/'}>{c.data.title}</a></>)}
+      </p>
+    )}
+  </div>
+  <Tags domains={d.domains} />
+</article>

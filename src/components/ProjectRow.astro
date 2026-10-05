@@ -1,0 +1,30 @@
+---
+import { getEntry } from 'astro:content';
+import Tags from './Tags.astro';
+import { LEVELS, STATUS } from '../data/lab';
+import { projectUrl, refIds, type Project } from '../lib';
+interface Props { project: Project }
+const { project: p } = Astro.props;
+const d = p.data;
+const url = projectUrl(p);
+const parent = d.parent ? await getEntry(d.parent) : undefined;
+---
+<article class="row" data-filter data-level={d.level} data-domains={refIds(d.domains).join('|')}>
+  <div class="meta">
+    <div class="status live">{STATUS[d.status]}</div>
+    {d.version && <>{d.version}<br></>}
+    Niveau {d.level} · {LEVELS[d.level].name}
+  </div>
+  <div>
+    <h3>{url ? <a href={url}>{d.title}</a> : d.title}</h3>
+    <p>{d.summary}</p>
+    {d.links.length > 0 && (
+      <p class="meta" style="margin-top:10px">
+        {d.links.map(([label, href], i) => <>{i > 0 && ' · '}<a href={href}>{label} ↗</a></>)}
+      </p>
+    )}
+    {parent && <p class="meta muted" style="margin-top:4px">Programme : {parent.data.title}</p>}
+    {!url && <p class="meta muted" style="margin-top:4px">Fiche du lab à venir</p>}
+  </div>
+  <Tags domains={d.domains} />
+</article>

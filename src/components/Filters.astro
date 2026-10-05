@@ -1,0 +1,73 @@
+---
+// Filtres à puces côté navigateur. Sans JavaScript, tout reste affiché.
+// groups : [clé, libellé, options [valeur, texte][], multiple?].
+// Les lignes filtrables portent data-filter et data-<clé> (valeurs séparées par « | »).
+interface Props { groups: [string, string, [string, string][], boolean?][]; scope: string }
+const { groups, scope } = Astro.props;
+---
+<div class="filters" data-filters={scope}>
+  {groups.map(([key, label, options, multi]) => (
+    <div class="group">
+      <span class="label">{label}</span>
+      <div class="tags" data-key={key} data-multi={multi ? '1' : ''}>
+        {options.map(([v, t]) => <button type="button" class="tag" data-v={v} aria-pressed="false">{t}</button>)}
+      </div>
+    </div>
+  ))}
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-filters]').forEach((box) => {
+    const root = document.getElementById(box.dataset.filters!)!;
+    const params = new URLSearchParams(location.search);
+    const state = new Map<string, Set<string>>();
+
+    box.querySelectorAll<HTMLElement>('[data-key]').forEach((g) => {
+      const key = g.dataset.key!;
+      const preset = params.get(key === 'domains' ? 'tag' : key);
+      state.set(key, new Set(preset ? [preset] : []));
+      g.addEventListener('click', (e) => {
+        const b = (e.target as HTMLElement).closest('button');
+        if (!b) return;
+        const set = state.get(key)!;
+        const v = b.dataset.v!;
+        if (set.has(v)) set.delete(v);
+        else { if (!g.dataset.multi) set.clear(); set.add(v); }
+        apply();
+      });
+    });
+
+    function apply() {
+      box.querySelectorAll<HTMLElement>('[data-key]').forEach((g) =>
+        g.querySelectorAll('button').forEach((b) =>
+          b.setAttribute('aria-pressed', String(state.get(g.dataset.key!)!.has(b.dataset.v!)))));
+
+      root.querySelectorAll<HTMLElement>('[data-filter]').forEach((row) => {
+        const ok = [...state].every(([key, set]) => {
+          if (!set.size) return true;
+          const vals = (row.dataset[key] ?? '').split('|');
+          return [...set].every((v) => vals.includes(v));
+        });
+        row.toggleAttribute('data-hidden', !ok);
+      });
+
+      // compteurs « n / total » et messages vides
+      root.querySelectorAll<HTMLElement>('[data-count]').forEach((c) => {
+        const list = document.getElementById(c.dataset.count!)!;
+        const all = list.querySelectorAll('[data-filter]').length;
+        const shown = list.querySelectorAll('[data-filter]:not([data-hidden])').length;
+        c.textContent = `${shown} / ${all}`;
+        const empty = document.querySelector<HTMLElement>(`[data-empty="${c.dataset.count}"]`);
+        if (empty) empty.hidden = shown > 0;
+      });
+
+      // groupes repliables : masqués s'ils sont vides, ouverts quand un filtre est actif
+      const filtering = [...state.values()].some((s) => s.size);
+      root.querySelectorAll<HTMLDetailsElement>('details[data-group]').forEach((d) => {
+        d.toggleAttribute('data-hidden', d.querySelectorAll('[data-filter]:not([data-hidden])').length === 0);
+        if (filtering) d.open = true;
+      });
+    }
+    apply();
+  });
+</script>

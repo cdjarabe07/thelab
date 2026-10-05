@@ -1,0 +1,11 @@
+---
+// Domaines (références, liées à leur page) ou libellés libres (techniques, non liés).
+import { domainUrl, getDomains } from '../lib';
+interface Props { domains?: { id: string }[]; labels?: string[] }
+const { domains = [], labels = [] } = Astro.props;
+const map = await getDomains();
+---
+<div class="tags">
+  {domains.map(({ id }) => <a class="tag" href={domainUrl(id)}>{map.get(id)!.data.name}</a>)}
+  {labels.map((t) => <span class="tag">{t}</span>)}
+</div>

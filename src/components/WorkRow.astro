@@ -1,0 +1,12 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Tags from './Tags.astro';
+interface Props { work: CollectionEntry<'works'> }
+const { work } = Astro.props;
+const w = work.data;
+---
+<article class="row compact">
+  <div class="meta">{w.kind}</div>
+  <div><h3><a href={w.url}>{w.title} ↗</a></h3><p>{w.desc}</p></div>
+  <Tags domains={w.domains} />
+</article>

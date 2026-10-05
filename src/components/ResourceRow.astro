@@ -1,0 +1,23 @@
+---
+import { getEntry, type CollectionEntry } from 'astro:content';
+import Tags from './Tags.astro';
+import { projectUrl } from '../lib';
+interface Props { resource: CollectionEntry<'resources'> }
+const r = Astro.props.resource.data;
+const proj = r.project ? await getEntry(r.project) : undefined;
+---
+<article class="row">
+  <div class="meta">{r.kind}{r.format && <><br><span class="muted">{r.format}</span></>}</div>
+  <div>
+    <h3><a href={r.url}>{r.title} ↗</a></h3>
+    <p>{r.desc}</p>
+    {(proj || r.licence) && (
+      <p class="meta" style="margin-top:8px">
+        {proj && <>Projet : <a href={projectUrl(proj) ?? '/projects/'}>{proj.data.title}</a></>}
+        {proj && r.licence && ' · '}
+        {r.licence && <>Licence : {r.licence}</>}
+      </p>
+    )}
+  </div>
+  <Tags domains={r.domains} />
+</article>
