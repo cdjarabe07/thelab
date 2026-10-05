@@ -2,37 +2,36 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import ResourceRow from '../components/ResourceRow.astro';
+import { RESOURCE_KINDS } from '../data/lab';
 
 const resources = await getCollection('resources');
+const groups = Object.entries(RESOURCE_KINDS).map(([k, v]) => ({ key: k, ...v, items: resources.filter((r) => r.data.kind === k) }));
 ---
 <Base page="resources" title="Resources" description="Ce que TheLab produit et qui peut être réutilisé : données, notebooks, code, outils et lectures.">
   <div class="frame">
     <section class="hero" style="padding-bottom:48px">
       <h1><span>Resources</span></h1>
       <div class="hero-meta">
-        <p class="hero-intro"><span>Ce que le lab produit et qui peut être réutilisé : données, notebooks, code, outils, et les lectures qui ont compté.</span></p>
+        <p class="hero-intro"><span>Ce que le lab produit et qui peut être réutilisé : données, notebooks, code et outils, chaque fois rattachés au projet qui les a produits. Les ressources s'ajoutent au fil des projets ; un type encore vide l'est faute de contenu réel, pas par oubli.</span></p>
       </div>
     </section>
 
     <main>
-      <section>
-        <div class="list-head" style="border-bottom:0"><div class="label arrow">Types de ressources</div></div>
-        <div class="types">
-          <div><h4>Données</h4><p>Jeux de données nettoyés ou exportés, avec leur source et leur licence.</p></div>
-          <div><h4>Notebooks</h4><p>Analyses reproductibles, prêtes à être exécutées.</p></div>
-          <div><h4>Code</h4><p>Dépôts, pipelines et petites bibliothèques issus des projets.</p></div>
-          <div><h4>Outils</h4><p>Applications et dashboards utilisables en ligne.</p></div>
-          <div><h4>Lectures</h4><p>Papiers, livres et cours qui ont nourri le travail du lab.</p></div>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="list-head">
-          <div class="label arrow">Toutes les ressources</div>
-          <span class="count">{resources.length}</span>
-        </div>
-        {resources.map((r) => <ResourceRow resource={r} />)}
-      </section>
+      {groups.map((g, i) => (
+        <section class:list={[{ section: i > 0 }]} id={g.key} style={i > 0 ? 'padding-bottom:0' : undefined}>
+          <div class="list-head">
+            <div class="label arrow">{g.name}</div>
+            <span class="count">{g.items.length}</span>
+          </div>
+          <p class="list-intro muted">{g.desc}</p>
+          {g.items.length > 0
+            ? g.items.map((r) => <ResourceRow resource={r} />)
+            : <p class="empty">Rien pour l'instant. {g.key === 'lectures'
+                ? "Les papiers, livres et cours qui comptent pour le travail du lab seront listés ici, avec ce qu'ils ont apporté."
+                : 'Cette rubrique se remplira avec les prochains projets.'}</p>}
+        </section>
+      ))}
+      <div class="section"></div>
     </main>
   </div>
 </Base>

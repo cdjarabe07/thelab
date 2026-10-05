@@ -1,7 +1,15 @@
 ---
+import { getEntries } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import Tags from '../components/Tags.astro';
+import { PUBLICATION_FORMATS } from '../data/lab';
+import { formatDate, getActiveProjects, getPublications, projectUrl } from '../lib';
+
+const publications = await getPublications();
+const rows = await Promise.all(publications.map(async (p) => ({ p, projects: await getEntries(p.data.projects) })));
+const projects = (await getActiveProjects()).filter((p) => projectUrl(p));
 ---
-<Base page="publications" title="Publications" description="Les travaux formels de TheLab : rapports techniques, études de cas, reproductions et articles.">
+<Base page="publications" title="Publications" description="Les travaux formels de TheLab : rapports techniques, études de cas, reproductions, articles et présentations.">
   <div class="frame">
     <section class="hero" style="padding-bottom:48px">
       <h1><span>Publications</span></h1>
@@ -12,22 +20,42 @@ import Base from '../layouts/Base.astro';
 
     <main>
       <section>
-        <div class="list-head" style="border-bottom:0"><div class="label arrow">Formats</div></div>
-        <div class="types">
-          <div><h4>Rapport technique</h4><p>La synthèse complète d'un projet : données, méthode, résultats, limites.</p></div>
-          <div><h4>Étude de cas</h4><p>Un problème appliqué traité de bout en bout, rédigé pour être lu hors du lab.</p></div>
-          <div><h4>Reproduction</h4><p>Le compte rendu formel d'un papier reproduit, avec les écarts observés.</p></div>
-          <div><h4>Article / preprint</h4><p>Un travail de recherche original, soumis ou déposé.</p></div>
-          <div><h4>Présentation</h4><p>Supports de talks, séminaires ou meetups.</p></div>
+        <div class="list-head">
+          <div class="label arrow">Toutes les publications</div>
+          <span class="count">{publications.length}</span>
         </div>
+        {rows.length > 0 ? rows.map(({ p, projects: pr }) => (
+          <article class="row">
+            <div class="meta">{PUBLICATION_FORMATS[p.data.format].name}<br>{formatDate(p.data.date)}</div>
+            <div>
+              <h3>{p.data.title}</h3>
+              <p>{p.data.abstract}</p>
+              <p class="meta" style="margin-top:8px">
+                {p.data.authors.join(', ')}
+                {pr.length > 0 && <> · {pr.map((x, i) => <>{i > 0 && ' · '}<a href={projectUrl(x) ?? '/projects/'}>{x.data.title}</a></>)}</>}
+              </p>
+              {p.data.links.length > 0 && (
+                <p class="meta" style="margin-top:6px">{p.data.links.map(([l, h], i) => <>{i > 0 && ' · '}<a href={h}>{l} ↗</a></>)}</p>
+              )}
+            </div>
+            <Tags domains={p.data.domains} />
+          </article>
+        )) : (
+          <div class="empty">
+            <p style="margin-top:0">Aucune publication pour l'instant, et c'est voulu : le lab est en construction. Une publication n'est mise en ligne que lorsqu'un travail est abouti, relu, et assez documenté pour être cité. Rien n'est publié pour remplir cette page.</p>
+            <p style="margin-bottom:0">En attendant, le travail se lit dans les fiches projet
+              {projects.length > 0 && <>({projects.map((x, i) => <>{i > 0 && ', '}<a href={projectUrl(x)!}>{x.data.title}</a></>)})</>}
+              et dans le <a href="/notes/">carnet de notes</a>.</p>
+          </div>
+        )}
       </section>
 
       <section class="section">
-        <div class="list-head">
-          <div class="label arrow">Toutes les publications</div>
-          <span class="count">0</span>
+        <div class="list-head" style="border-bottom:0"><div class="label arrow">Formats prévus</div></div>
+        <div class="types">
+          {Object.values(PUBLICATION_FORMATS).map((f) => <div><h4>{f.name}</h4><p>{f.desc}</p></div>)}
         </div>
-        <p class="empty">Aucune publication pour l'instant. Les premières viendront des projets en cours.</p>
+        <p class="list-intro muted">Chaque publication indiquera son format, sa date, un résumé, les projets dont elle est issue, ses domaines, la référence à citer et le lien vers le PDF, le DOI ou le dépôt.</p>
       </section>
     </main>
   </div>
