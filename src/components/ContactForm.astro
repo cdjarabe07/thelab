@@ -1,0 +1,72 @@
+---
+// Formulaire de contact via Web3Forms : le message est envoyé par e-mail, aucun serveur à maintenir.
+// Sans JavaScript, le formulaire est posté normalement et Web3Forms affiche sa page de confirmation.
+import { CONTACT } from '../data/lab';
+const key = CONTACT.web3formsKey;
+---
+{key && (
+  <form class="contact-form" action="https://api.web3forms.com/submit" method="POST" data-contact>
+    <input type="hidden" name="access_key" value={key}>
+    <input type="hidden" name="subject" value="TheLab · nouveau message">
+    <input type="hidden" name="from_name" value="TheLab">
+    {/* Piège à robots : invisible pour un humain, rempli par les robots de spam */}
+    <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+    <div class="fields">
+      <label>
+        <span class="label">Nom</span>
+        <input name="name" type="text" autocomplete="name" required maxlength="120">
+      </label>
+      <label>
+        <span class="label">E-mail</span>
+        <input name="email" type="email" autocomplete="email" required maxlength="200">
+      </label>
+    </div>
+    <label>
+      <span class="label">Objet</span>
+      <select name="objet">
+        <option>Collaboration</option>
+        <option>Idée de projet ou données à explorer</option>
+        <option>Question sur une note ou un projet</option>
+        <option>Opportunité professionnelle</option>
+        <option>Autre</option>
+      </select>
+    </label>
+    <label>
+      <span class="label">Message</span>
+      <textarea name="message" rows="6" required maxlength="5000"></textarea>
+    </label>
+    <div class="form-foot">
+      <button class="btn" type="submit">Envoyer</button>
+      <p class="status meta" role="status" aria-live="polite"></p>
+    </div>
+    <p class="muted fine">Votre adresse sert uniquement à vous répondre. Le message transite par Web3Forms.</p>
+  </form>
+)}
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('form[data-contact]').forEach((form) => {
+    const status = form.querySelector<HTMLElement>('.status')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      button.disabled = true;
+      status.textContent = 'Envoi…';
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(Object.fromEntries(new FormData(form))),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.message || res.statusText);
+        form.reset();
+        status.textContent = 'Message envoyé. Merci, je réponds en général sous quelques jours.';
+      } catch {
+        status.textContent = "L'envoi a échoué. Réessayez, ou écrivez-moi sur LinkedIn.";
+      } finally {
+        button.disabled = false;
+      }
+    });
+  });
+</script>

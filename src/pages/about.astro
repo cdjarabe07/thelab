@@ -1,5 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
+import ContactForm from '../components/ContactForm.astro';
+import { CONTACT } from '../data/lab';
 ---
 <Base page="about" title="About" searchable description="Caleb Djarabé : data science et IA, basé à Dakar. Démarche, parcours, certificats et contact.">
   <div class="frame">
@@ -71,7 +73,9 @@ import Base from '../layouts/Base.astro';
         <div class="label arrow">Contact</div>
         <h2 style="margin-top:16px;max-width:20ch">Une idée de projet, des données à explorer, une collaboration ?</h2>
         <p style="max-width:60ch">Je suis ouvert aux échanges avec des équipes data et R&amp;D, aux collaborations et aux propositions de sujets.</p>
-        <div class="actions" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:24px">
+        <ContactForm />
+        {CONTACT.web3formsKey && <p class="meta" style="margin-top:32px">Ou directement :</p>}
+        <div class="actions" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
           <a class="btn" href="https://www.linkedin.com/in/caleb-djarabe">LinkedIn ↗</a>
           <a class="btn ghost" href="https://github.com/cdjarabe07">GitHub ↗</a>
         </div>

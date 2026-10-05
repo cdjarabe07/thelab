@@ -343,3 +343,31 @@ table.data td.num { white-space: nowrap; }
 .discussion { border-top: 1px solid var(--ink); margin-top: 56px; padding-top: 20px; }
 .discussion > p { font-size: 0.95em; margin: 8px 0 24px; }
 .discussion .giscus-mount { min-height: 120px; }
+
+/* Formulaires (contact, newsletter) */
+.hp, .sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.contact-form { display: grid; gap: 16px; margin-top: 32px; max-width: 640px; }
+.contact-form .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.contact-form label { display: grid; gap: 6px; }
+.contact-form input, .contact-form select, .contact-form textarea,
+.newsletter-form input {
+  font: inherit; color: var(--ink); background: var(--bg);
+  border: 1px solid var(--ink); border-radius: 2px; padding: 10px 12px; width: 100%;
+}
+.contact-form textarea { resize: vertical; min-height: 140px; }
+.contact-form :focus-visible, .newsletter-form :focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.contact-form .form-foot { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.contact-form .status { margin: 0; }
+.contact-form .fine { font-size: 0.85em; margin: 0; }
+.btn:disabled { opacity: 0.6; cursor: wait; }
+
+.newsletter { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gutter); align-items: end; border-top: 1px solid var(--ink); padding: 32px 0 8px; }
+.newsletter h2 { font-size: var(--fs-l); font-weight: 300; margin: 12px 0 8px; max-width: 22ch; }
+.newsletter p { margin: 8px 0 0; font-size: 0.95em; }
+.newsletter-form { display: flex; gap: 8px; }
+.newsletter-form .btn { white-space: nowrap; }
+.newsletter.compact { grid-template-columns: 1fr; padding-top: 24px; }
+@media (max-width: 700px) {
+  .contact-form .fields, .newsletter { grid-template-columns: 1fr; }
+  .newsletter-form { flex-direction: column; }
+}
