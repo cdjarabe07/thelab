@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import DakarMap from '../components/DakarMap.astro';
 import ProjectRow from '../components/ProjectRow.astro';
 import NoteRow from '../components/NoteRow.astro';
+import Newsletter from '../components/Newsletter.astro';
 import { LEVELS, CURRENT_LEVELS, LINKS } from '../data/lab';
 import { getActiveProjects, getNotes, getRoadmap, projectUrl } from '../lib';
 
@@ -108,5 +109,7 @@ const current = projects.filter((p) => p.data.status === 'en-cours' && projectUr
       <details><summary>Le code est-il réutilisable ?</summary><p>Le code des projets est public sur GitHub. Aucune licence n'est encore déclarée sur les dépôts : pour une réutilisation, demandez l'autorisation. Les données gardent la licence de leur source (par exemple ODbL pour OpenStreetMap).</p></details>
       <details><summary>Comment me contacter ?</summary><p>Sur <a href={LINKS.linkedin}>LinkedIn</a> ou via <a href={LINKS.github}>GitHub</a>. Une courte description de votre idée, de vos données ou de votre question suffit.</p></details>
     </section>
+
+    <div class="section tight"><Newsletter /></div>
   </main>
 </Base>

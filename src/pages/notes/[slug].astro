@@ -5,6 +5,7 @@ import Base from '../../layouts/Base.astro';
 import NoteRow from '../../components/NoteRow.astro';
 import Tags from '../../components/Tags.astro';
 import Comments from '../../components/Comments.astro';
+import Newsletter from '../../components/Newsletter.astro';
 import { NOTE_TYPES, SITE, giscusEnabled } from '../../data/lab';
 import { formatDate, getDomains, getNotes, isoDate, projectUrl, refIds, type Note } from '../../lib';
 
@@ -84,6 +85,7 @@ const jsonld = {
           <pre><code>{bibtex}</code></pre>
           <button class="btn ghost" type="button" data-copy={bibtex}>Copier le BibTeX</button>
         </section>
+        <Newsletter compact />
         <Comments />
       </article>
     </div>

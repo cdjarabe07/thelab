@@ -1,0 +1,22 @@
+---
+// Abonnement aux notes par e-mail via Buttondown. Double opt-in géré par Buttondown (e-mail de confirmation).
+import { NEWSLETTER } from '../data/lab';
+interface Props { compact?: boolean }
+const { compact = false } = Astro.props;
+const user = NEWSLETTER.buttondown;
+---
+{user && (
+  <section class:list={['newsletter', { compact }]} aria-label="Recevoir les notes par e-mail">
+    <div>
+      <div class="label arrow">Suivre le lab</div>
+      {!compact && <h2>Recevoir les nouvelles notes par e-mail.</h2>}
+      <p>Une note publiée, un e-mail. Pas d'autre envoi, désabonnement en un clic. Ou par <a href="/notes/rss.xml">RSS</a>.</p>
+    </div>
+    <form action={`https://buttondown.com/api/emails/embed-subscribe/${user}`} method="post" target="_blank" class="newsletter-form">
+      <label class="sr" for={`nl-${compact ? 'c' : 'f'}`}>Adresse e-mail</label>
+      <input id={`nl-${compact ? 'c' : 'f'}`} type="email" name="email" placeholder="votre@adresse.email" autocomplete="email" required>
+      <input type="hidden" name="tag" value="thelab">
+      <button class="btn" type="submit">S'abonner</button>
+    </form>
+  </section>
+)}

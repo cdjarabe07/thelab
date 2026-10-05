@@ -7,7 +7,7 @@ import '@fontsource/noticia-text/400.css';
 import '@fontsource/noticia-text/400-italic.css';
 import '@fontsource/noticia-text/700.css';
 import '../styles/global.css';
-import { NAV, LINKS, SITE, ANALYTICS } from '../data/lab';
+import { NAV, LINKS, SITE, ANALYTICS, NEWSLETTER } from '../data/lab';
 import { assertIntegrity, formatDate } from '../lib';
 
 await assertIntegrity();
@@ -94,6 +94,7 @@ const ld = jsonld ?? { '@context': 'https://schema.org', '@type': 'WebSite', nam
         <li><a href={LINKS.github}>GitHub ↗</a></li>
         <li><a href={LINKS.linkedin}>LinkedIn ↗</a></li>
         <li><a href="/notes/rss.xml">Flux RSS des notes</a></li>
+        {NEWSLETTER.buttondown && <li><a href={`https://buttondown.com/${NEWSLETTER.buttondown}`}>Notes par e-mail ↗</a></li>}
       </ul></div>
     </footer>
   </div>

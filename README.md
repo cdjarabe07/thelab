@@ -79,6 +79,18 @@ Les discussions sous les notes sont stockées dans les **Discussions GitHub** du
 
 Le thème aux couleurs du site (`public/giscus-theme.css`) s'applique en production, une fois `site` renseigné dans `astro.config.mjs`.
 
+### Activer le contact, la newsletter et les statistiques
+
+Tout se règle dans `src/data/lab.ts`. Tant qu'un identifiant est vide, la fonction correspondante n'apparaît pas sur le site.
+
+| Fonction | Service (gratuit) | Ce qu'il faut renseigner |
+|---|---|---|
+| Formulaire de contact (page About) | [Web3Forms](https://web3forms.com) : saisir l'adresse de réception, la clé arrive par e-mail | `CONTACT.web3formsKey` |
+| Newsletter (accueil, Notes, bas de chaque note) | [Buttondown](https://buttondown.com) : créer un compte, puis *Automations → RSS-to-email* avec `https://thelab-beta.vercel.app/notes/rss.xml` | `NEWSLETTER.buttondown` (nom d'utilisateur) |
+| Statistiques de visite | Vercel Web Analytics : projet thelab → *Analytics* → *Enable* | rien (`ANALYTICS.vercel` vaut déjà `true`) |
+
+La clé Web3Forms est conçue pour être publique : elle permet seulement d'envoyer un message vers ton adresse.
+
 ## Ce que le build garantit
 
 1. **Schémas** : champs obligatoires, valeurs autorisées, URL valides.

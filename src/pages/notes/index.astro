@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import Filters from '../../components/Filters.astro';
 import NoteRow from '../../components/NoteRow.astro';
+import Newsletter from '../../components/Newsletter.astro';
 import { NOTE_TYPES } from '../../data/lab';
 import { getActiveProjects, getDomains, getNotes, refIds } from '../../lib';
 
@@ -43,6 +44,7 @@ const countOf = (k: string) => notes.filter((n) => n.data.type === k).length;
       </div>
       <div id="liste-notes">{notes.map((n) => <NoteRow note={n} />)}</div>
       <p class="empty" data-empty="liste-notes" hidden>Pas encore de note ici. Le carnet se remplit au rythme des projets.</p>
+      <div style="margin-top:64px"><Newsletter /></div>
     </main>
   </div>
 </Base>
