@@ -14,13 +14,15 @@ facts: [["Données", "14 séries · BCEAO via DBnomics"], ["Modèles", "SARIMA p
 cover: {"src": "/img/uemoa-accueil.jpg", "alt": "Page d'accueil de l'observatoire économique UEMOA : titre, accès aux données et aux prévisions 2026–2027.", "caption": "Page d'accueil de l'observatoire. Données mises à jour le 20/09/2026."}
 ---
 
-## Problème
+## Question de départ
+
+**Où en est l'économie, et où va-t-elle probablement ?** L'observatoire y répond en publiant des prévisions accompagnées de leur incertitude, et en disant clairement quand un modèle ne fait pas mieux qu'une simple projection de la dernière valeur.
+
+## Contexte
 
 Les données macroéconomiques de l'UEMOA existent, mais elles sont dispersées entre bases officielles, formats et fréquences. Pour un étudiant, un analyste ou un décideur, obtenir une vue claire de l'inflation, du PIB ou de la masse monétaire, avec une idée de leur évolution probable, demande beaucoup de travail manuel.
 
-L'observatoire répond à une question simple : **où en est l'économie, et où va-t-elle probablement ?** Il le fait en publiant des prévisions accompagnées de leur incertitude, et en disant clairement quand un modèle ne fait pas mieux qu'une simple projection de la dernière valeur.
-
-## Données
+## Données et sources
 
 - **Source :** la BCEAO (Banque Centrale des États de l'Afrique de l'Ouest), consultée via DBnomics, qui agrège les données officielles des banques centrales et instituts statistiques.
 - **Couverture :** environ 14 séries, dont l'inflation (IPC, depuis 1998), le PIB nominal (depuis 1960) et sa décomposition agriculture / industrie / services, la masse monétaire M2, le taux de change, la balance commerciale et les réserves de change.
@@ -30,11 +32,11 @@ L'observatoire répond à une question simple : **où en est l'économie, et où
 
 Toutes les séries sont exportables depuis l'observatoire en CSV, JSON et PDF.
 
-## Approche
+## Méthodologie
 
-### Un pipeline, un modèle par indicateur
+### Un modèle par indicateur
 
-Un pipeline récupère les séries via l'API DBnomics, construit des variables dérivées (retards, moyennes mobiles), entraîne un modèle de prévision pour chaque indicateur et exporte les résultats que l'interface affiche. La mise à jour est automatisée chaque mois. Pour chaque série, un **SARIMA** est entraîné avec une recherche automatique du meilleur ordre (p, d, q) : les candidats sont comparés sur leur erreur moyenne absolue (MAE) en **validation glissante** (walk-forward).
+Pour chaque série, un **SARIMA** est entraîné avec une recherche automatique du meilleur ordre (p, d, q) : les candidats sont comparés sur leur erreur moyenne absolue (MAE) en **validation glissante** (walk-forward). Chaque modèle retenu est comparé à la prévision naïve, qui répète la dernière valeur connue.
 
 ### Accepter le modèle naïf
 
@@ -42,36 +44,26 @@ Certaines séries, comme le taux de change XOF/USD ou la balance commerciale, se
 
 ### Des signaux calculés, pas des opinions
 
-La page d'accueil affiche des alertes produites par des règles déterministes appliquées aux prévisions :
+La page d'accueil de l'observatoire affiche des alertes produites par des règles déterministes appliquées aux prévisions :
 
 - l'intervalle de confiance à 95 % traverse zéro : le signe de la variation n'est pas établi ;
 - la valeur centrale varie de plus de 25 % entre les deux années prévues ;
 - un indicateur suivi n'a pas de prévision exportée (marche aléatoire).
 
-## Résultats
+## Architecture et pipeline
 
-<figure class="figure">
-<img alt="Inflation au Sénégal de 1998 à 2024, puis prévisions 2026 et 2027 avec un intervalle de confiance qui traverse zéro." src="/img/uemoa-inflation.svg" style="border:0"/>
-<figcaption>Inflation au Sénégal, 1998–2024, et prévisions 2026–2027 avec IC 95 %. 2025 n'est pas encore publiée dans la source.</figcaption>
-</figure>
+Un pipeline récupère les séries via l'API DBnomics, construit des variables dérivées (retards, moyennes mobiles), entraîne un modèle de prévision pour chaque indicateur et exporte les résultats que l'interface affiche. La mise à jour est automatisée chaque mois.
 
-Extrait des prévisions publiées (Sénégal, mise à jour du 20/09/2026) :
+- **Pipeline :** Python, pandas, statsmodels (SARIMA), client `dbnomics` ; exploration et modélisation dans Jupyter ; premier prototype de dashboard en Streamlit.
+- **Interface :** React, Vite, Recharts (graphiques), React Router, i18next (FR / EN), jsPDF (exports PDF). Pages Accueil, Données, Prévisions, Comparaison, Méthodologie.
+- **Données :** API DBnomics.
+- **Hébergement :** Vercel.
 
-<div class="table-wrap">
-<table class="data">
-<thead><tr><th>Indicateur</th><th>2026</th><th>IC 95 %</th><th>2027</th><th>Modèle · MAE</th></tr></thead>
-<tbody>
-<tr><td>PIB nominal</td><td class="num">21 920 Mds FCFA</td><td class="num">21 437 – 22 403</td><td class="num">23 476 Mds FCFA</td><td>SARIMA (2,1,0) · 361,61</td></tr>
-<tr><td>Inflation</td><td class="num">2,9 %</td><td class="num">-1,3 % – 7 %</td><td class="num">1,7 %</td><td>SARIMA (1,1,2) · 1,42</td></tr>
-<tr><td>Masse monétaire (M2)</td><td class="num">10 477 Mds FCFA</td><td class="num">9 948 – 11 007</td><td class="num">10 654 Mds FCFA</td><td>SARIMA</td></tr>
-<tr><td>Taux de change</td><td colspan="3">Pas de prévision publiée : marche aléatoire</td><td>Naïf · 28,47</td></tr>
-</tbody>
-</table>
-</div>
+## Expérimentations
 
 ### Le SARIMA face au modèle naïf
 
-Chaque modèle retenu est comparé à la prévision naïve (répéter la dernière valeur connue), en MAE sur validation glissante :
+Comparaison, en MAE sur validation glissante, entre la prévision naïve et le meilleur SARIMA :
 
 <div class="table-wrap">
 <table class="data">
@@ -84,7 +76,34 @@ Chaque modèle retenu est comparé à la prévision naïve (répéter la derniè
 </table>
 </div>
 
-À noter : l'intervalle de confiance de l'inflation traverse zéro en 2026 comme en 2027. Le modèle ne permet donc pas de dire si l'inflation sera positive ou négative, et l'observatoire le signale.
+### Un simulateur « et si » pétrole → inflation
+
+Un SARIMAX reliant le prix du pétrole à l'inflation a été testé, pour passer de la prévision à l'analyse de scénarios. Résultat : voir [Ce qui n'a pas fonctionné](#ce-qui-na-pas-fonctionné).
+
+## Résultats
+
+<div class="callout"><span class="label">À lire avant les chiffres</span>Ces prévisions sont des estimations statistiques produites par le pipeline de l'observatoire, à partir des séries publiées par la BCEAO. Ce ne sont ni des prévisions officielles de la BCEAO ou d'une autre institution, ni des valeurs certaines : chaque valeur centrale est accompagnée d'un intervalle de confiance à 95 %, et c'est cet intervalle qu'il faut lire en premier.</div>
+
+<figure class="figure">
+<img alt="Inflation au Sénégal de 1998 à 2024, puis prévisions 2026 et 2027 avec un intervalle de confiance qui traverse zéro." src="/img/uemoa-inflation.svg" style="border:0"/>
+<figcaption>Inflation au Sénégal, 1998–2024, et prévisions 2026–2027 avec IC 95 %. 2025 n'est pas encore publiée dans la source.</figcaption>
+</figure>
+
+Extrait des prévisions publiées (Sénégal, mise à jour du 20/09/2026) :
+
+<div class="table-wrap">
+<table class="data">
+<thead><tr><th>Indicateur</th><th>2026 (estimation)</th><th>IC 95 %</th><th>2027 (estimation)</th><th>Modèle · MAE</th></tr></thead>
+<tbody>
+<tr><td>PIB nominal</td><td class="num">21 920 Mds FCFA</td><td class="num">21 437 – 22 403</td><td class="num">23 476 Mds FCFA</td><td>SARIMA (2,1,0) · 361,61</td></tr>
+<tr><td>Inflation</td><td class="num">2,9 %</td><td class="num">-1,3 % – 7 %</td><td class="num">1,7 %</td><td>SARIMA (1,1,2) · 1,42</td></tr>
+<tr><td>Masse monétaire (M2)</td><td class="num">10 477 Mds FCFA</td><td class="num">9 948 – 11 007</td><td class="num">10 654 Mds FCFA</td><td>SARIMA</td></tr>
+<tr><td>Taux de change</td><td colspan="3">Pas de prévision publiée : marche aléatoire</td><td>Naïf · 28,47</td></tr>
+</tbody>
+</table>
+</div>
+
+Les valeurs évoluent à chaque mise à jour mensuelle du pipeline : les chiffres à jour sont sur l'observatoire.
 
 <figure class="figure">
 <img alt="Page Prévisions de l'observatoire : prévisions 2026–2027 du PIB nominal avec intervalle de confiance." src="/img/uemoa-previsions.jpg"/>
@@ -94,25 +113,33 @@ Chaque modèle retenu est comparé à la prévision naïve (répéter la derniè
 ## Limites
 
 - **Échantillons courts.** Les séries sont annuelles : même les plus longues ne comptent que quelques dizaines de points, et l'inflation commence en 1998. Les intervalles de confiance restent donc larges.
-- **Simulateur « et si » non activé.** Un SARIMAX reliant le prix du pétrole à l'inflation a été testé, mais l'échantillon annuel disponible (moins de 30 années) est trop court pour établir un lien statistiquement fiable. La fonctionnalité reste désactivée plutôt que d'afficher un résultat non prouvé.
-- **Marches aléatoires.** Taux de change et balance commerciale ne sont pas prévisibles avec ces méthodes.
 - **Couverture régionale partielle.** 4 pays sur 8 sont couverts (Sénégal, Côte d'Ivoire, Burkina Faso, Mali).
 - **Séries figées.** Certaines séries ne sont plus mises à jour à la source.
 
-## Technologies
+## Ce qui n'a pas fonctionné
 
-- **Pipeline :** Python, pandas, statsmodels (SARIMA), client `dbnomics` ; exploration et modélisation dans Jupyter ; premier prototype de dashboard en Streamlit.
-- **Interface :** React, Vite, Recharts (graphiques), React Router, i18next (FR / EN), jsPDF (exports PDF).
-- **Données :** API DBnomics.
-- **Hébergement :** Vercel.
+- **Prévoir le taux de change et la balance commerciale.** Ces séries se comportent comme des marches aléatoires : le meilleur SARIMA ne fait pas mieux que la dernière valeur connue (MAE 28,45 contre 28,47 pour le taux de change). Aucune prévision n'est publiée pour elles.
+- **Le simulateur « et si ».** Avec un échantillon annuel de moins de 30 années, le lien entre prix du pétrole et inflation n'est pas statistiquement fiable. La fonctionnalité reste désactivée plutôt que d'afficher un résultat non prouvé.
 
-## Étapes
+## Interprétation
+
+- Sur l'inflation et le PIB nominal, le SARIMA réduit nettement l'erreur par rapport au modèle naïf (−40 % et −66 % de MAE) : la modélisation apporte une information réelle sur ces séries.
+- Pour l'inflation, l'intervalle de confiance traverse zéro en 2026 comme en 2027 : le modèle ne permet pas de dire si l'inflation sera positive ou négative. L'observatoire le signale explicitement.
+- Pour le taux de change, la conclusion utile est l'absence de prévisibilité avec ces méthodes et ces données.
+
+## État actuel
+
+Le projet est **en évolution**. La v1 de l'observatoire est en ligne, avec une mise à jour mensuelle automatisée.
 
 <ol class="steps">
-<li><span class="meta">Juillet 2026</span><div><strong>Pipeline de prévision</strong>Collecte automatique de 3 indicateurs (inflation, taux de change, PIB), feature engineering, comparaison naïf vs SARIMA, prototype Streamlit. <a href="https://github.com/cdjarabe07/Pr-vision-macro-conomique-automatis-e-UEMOA-Afrique-de-l-Ouest">Dépôt ↗</a></div></li>
-<li><span class="meta">v1 · en ligne</span><div><strong>Observatoire public</strong>Passage à une interface React (pages Accueil, Données, Prévisions, Comparaison, Méthodologie) et à environ 14 séries : prévisions 2026–2027 avec IC 95 %, comparaison régionale sur 4 pays et étude des corrélations entre indicateurs, signaux calculés, méthodologie, exports CSV / JSON / PDF, mise à jour mensuelle automatisée.</div></li>
-<li><span class="meta">Piste</span><div><strong>Élargir la couverture</strong>Les 4 pays de l'UEMOA restants (Bénin, Guinée-Bissau, Niger, Togo), et des séries trimestrielles ou mensuelles pour allonger les échantillons.</div></li>
-<li><span class="meta">Piste</span><div><strong>Scénarios et aide à la décision</strong>Réactiver le simulateur « et si » si des séries plus longues ou plus fréquentes rendent le lien pétrole–inflation mesurable, pour passer de la prévision à l'analyse de scénarios.</div></li>
-<li><span class="meta">Piste</span><div><strong>Plateforme éditoriale</strong>Accompagner les chiffres d'analyses rédigées : notes de conjoncture, explications des indicateurs, lecture des prévisions.</div></li>
+<li><span class="meta">Juillet 2026</span><div><strong>Pipeline de prévision</strong>Collecte automatique de 3 indicateurs (inflation, taux de change, PIB), feature engineering, comparaison naïf vs SARIMA, prototype Streamlit.</div></li>
+<li><span class="meta">v1 · en ligne</span><div><strong>Observatoire public</strong>Passage à une interface React et à environ 14 séries : prévisions 2026–2027 avec IC 95 %, comparaison régionale sur 4 pays et étude des corrélations entre indicateurs, signaux calculés, méthodologie, exports CSV / JSON / PDF.</div></li>
 </ol>
 
+## Prochaines pistes
+
+<ol class="steps">
+<li><span class="meta">Piste</span><div><strong>Élargir la couverture</strong>Les 4 pays de l'UEMOA restants (Bénin, Guinée-Bissau, Niger, Togo), et des séries trimestrielles ou mensuelles pour allonger les échantillons.</div></li>
+<li><span class="meta">Piste</span><div><strong>Scénarios et aide à la décision</strong>Réactiver le simulateur « et si » si des séries plus longues ou plus fréquentes rendent le lien pétrole–inflation mesurable.</div></li>
+<li><span class="meta">Piste</span><div><strong>Plateforme éditoriale</strong>Accompagner les chiffres d'analyses rédigées : notes de conjoncture, explications des indicateurs, lecture des prévisions.</div></li>
+</ol>

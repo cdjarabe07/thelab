@@ -1,9 +1,10 @@
 ---
-import { getEntry, render } from 'astro:content';
+import { getCollection, getEntry, render } from 'astro:content';
 import 'katex/dist/katex.min.css';
 import Base from '../../layouts/Base.astro';
 import DakarMap from '../../components/DakarMap.astro';
 import NoteRow from '../../components/NoteRow.astro';
+import ResourceRow from '../../components/ResourceRow.astro';
 import Tags from '../../components/Tags.astro';
 import { LEVELS, SITE, STATUS } from '../../data/lab';
 import { getDomains, getNotes, getProjects, hasPage, isoDate, refIds, type Project } from '../../lib';
@@ -17,6 +18,8 @@ const d = project.data;
 const { Content, headings } = await render(project);
 const related = (await getNotes()).filter((n) => n.data.projects.some((r) => r.id === project.id));
 const parent = d.parent ? await getEntry(d.parent) : undefined;
+const resources = (await getCollection('resources')).filter((r) => r.data.project?.id === project.id);
+const hasCode = d.links.length > 0 || resources.length > 0;
 const toc = headings.filter((h) => h.depth === 2);
 const [primary, ...secondary] = d.links;
 const domainMap = await getDomains();
@@ -77,7 +80,8 @@ const jsonld = {
         <div class="label">Sommaire</div>
         <ol>
           {toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
-          {related.length > 0 && <li><a href="#notes-liees">Notes liées</a></li>}
+          {hasCode && <li><a href="#code-et-ressources">Code, dashboard et ressources</a></li>}
+          {related.length > 0 && <li><a href="#notes-associees">Notes associées</a></li>}
         </ol>
         {d.techniques.length > 0 && <>
           <div class="label" style="margin-top:32px">Techniques</div>
@@ -87,8 +91,18 @@ const jsonld = {
 
       <article class="prose">
         <Content />
+        {/* Sections générées : toujours à jour avec les liens, les ressources et les notes du projet */}
+        {hasCode && <>
+          <h2 id="code-et-ressources">Code, dashboard et ressources</h2>
+          {d.links.length > 0 && (
+            <ul class="link-list">
+              {d.links.map(([label, href]) => <li><a href={href}>{label} ↗</a> <span class="muted">{new URL(href).host.replace(/^www\./, '')}</span></li>)}
+            </ul>
+          )}
+          {resources.length > 0 && <div class="related" data-pagefind-ignore>{resources.map((r) => <ResourceRow resource={r} />)}</div>}
+        </>}
         {related.length > 0 && <>
-          <h2 id="notes-liees">Notes liées</h2>
+          <h2 id="notes-associees">Notes associées</h2>
           <div class="related" data-pagefind-ignore>{related.map((n) => <NoteRow note={n} showProject={false} />)}</div>
         </>}
       </article>
