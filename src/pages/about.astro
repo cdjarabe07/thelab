@@ -1,87 +1,79 @@
 ---
 import Base from '../layouts/Base.astro';
 import ContactForm from '../components/ContactForm.astro';
-import { CONTACT } from '../data/lab';
+import { CONTACT, LINKS } from '../data/lab';
 ---
-<Base page="about" title="About" searchable description="Caleb Djarabé : data science et IA, basé à Dakar. Démarche, parcours, certificats et contact.">
+<Base page="about" title="About" searchable description="Qui est derrière TheLab, et pourquoi ce laboratoire personnel et indépendant existe.">
   <div class="frame">
-  <section class="hero" style="padding-bottom:48px">
-    <h1><span>About</span></h1>
-    <div class="hero-meta">
-      <p class="hero-intro"><span>TheLab est tenu par Caleb Djarabé, basé à Dakar, en data science et en IA, avec un goût marqué pour la recherche et l'expérimentation technique. Work in progress, and that's the point.</span></p>
-    </div>
-  </section>
+    <section class="hero" style="padding-bottom:48px">
+      <h1><span>About</span></h1>
+      <div class="hero-meta">
+        <p class="hero-intro"><span>Qui est derrière <span class="tl">TheLab</span>, et pourquoi ce laboratoire existe. Work in progress, and that's the point.</span></p>
+      </div>
+    </section>
   </div>
-<main class="frame">
-  <section class="section">
-    <div class="split">
-      <div>
-        <div class="label arrow">Le lab</div>
-        <h2>Un espace pour construire, tester et apprendre en public.</h2>
-      </div>
-      <div>
-        <p style="margin-top:32px">TheLab est né d'une envie simple : ne pas s'éparpiller tout en gardant la curiosité intacte. Plutôt qu'une collection de petits exercices, le lab rassemble des projets de fond, souvent multidisciplinaires, et la trace du travail qui les accompagne.</p>
-        <p>Je viens de l'économie appliquée, et je m'oriente aussi vers la finance quantitative. Cette formation se retrouve dans les sujets que je choisis (données macroéconomiques, décision, questions urbaines) et dans une exigence : dire ce que les données permettent d'affirmer, et ce qu'elles ne permettent pas.</p>
-      </div>
-    </div>
-  </section>
 
-  <section>
-    <div class="list-head"><div class="label arrow">Comment je travaille</div></div>
-    <div class="types">
-      <div><h4>Un problème réel d'abord</h4><p>Chaque projet part d'une question concrète, pas d'une technique à placer.</p></div>
-      <div><h4>Plusieurs disciplines</h4><p>Un projet doit apprendre plusieurs choses à la fois : données, modèles, systèmes, interface.</p></div>
-      <div><h4>Des limites affichées</h4><p>Intervalles de confiance, modèles naïfs, fonctionnalités désactivées : l'incertitude fait partie du résultat.</p></div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="split">
-      <div>
-        <div class="label arrow">Objectif</div>
-        <h2>Évoluer vers des rôles data et IA à forte dimension technique et R&amp;D.</h2>
-      </div>
-      <p>La <a href="/#trajectoire">trajectoire du lab</a> va dans ce sens : des fondations solides, puis le deep learning, les systèmes en production, les gros projets transversaux, et enfin la reproduction de papiers et la recherche originale.</p>
-    </div>
-  </section>
-
-  <section>
-    <div class="list-head"><div class="label arrow">Parcours</div></div>
-    <article class="row compact"><div class="meta">Master · en cours</div><div><h3>WorldQuant University — MScFE</h3><p>Master en ingénierie financière, en ligne, parcours Données financières. Mathématiques appliquées : algèbre linéaire, calcul, statistiques.</p></div><div class="meta muted">Diplôme prévu<br>juillet 2028</div></article>
-    <article class="row compact"><div class="meta">Stage · à distance</div><div><h3><a href="https://github.com/cdjarabe07/AnalystLab_Internship_In_Data_Science">AnalystLab Africa — Data Science ↗</a></h3><p>Lagos, Nigéria. Analyse exploratoire du jeu IBM HR Analytics (1 470 employés, 35 variables) : effet de l'âge, du revenu, des heures supplémentaires, du département et de la fonction sur l'attrition.</p></div><div class="meta muted">Août – octobre 2026</div></article>
-    <article class="row compact"><div class="meta">Stage · à distance</div><div><h3><a href="https://github.com/cdjarabe07/ml-internship">Elevvo Pathways — Data Science / ML ↗</a></h3><p>Le Caire, Égypte. 10 tâches sur 10 : classification, recommandation, séries temporelles, classification audio, détection d'objets (YOLOv8), maintenance prédictive et pipeline MLOps (FastAPI, Docker, CI/CD) validé par 8 tests automatisés.</p></div><div class="meta muted">Août 2026</div></article>
-    <article class="row compact"><div class="meta">Licence</div><div><h3>Université St. Charles Lwanga</h3><p>Licence en économie appliquée. Sarh, Tchad.</p></div><div class="meta muted">Nov. 2020 – sept. 2023</div></article>
-
-    <div class="list-head" style="margin-top:48px"><div class="label arrow">Certificats</div></div>
-    <article class="row compact"><div class="meta">En cours</div><div><h3>IBM Data Science Professional Certificate</h3><p>Coursera.</p></div><div></div></article>
-    <article class="row compact"><div class="meta">Août 2026</div><div><h3>Machine Learning using Python</h3><p>Simplilearn SkillUp.</p></div><div></div></article>
-    <article class="row compact"><div class="meta">Juin 2026</div><div><h3>Python Essentials</h3><p>GoMyCode Sénégal.</p></div><div></div></article>
-    <article class="row compact"><div class="meta">Mai 2026</div><div><h3>Introduction aux statistiques officielles</h3><p>Nations unies (UNITAR / UNDESA).</p></div><div></div></article>
-    <article class="row compact"><div class="meta">Mai 2026</div><div><h3>Intelligence économique</h3><p>ITC e-learning.</p></div><div></div></article>
-
-    <div class="list-head" style="margin-top:48px"><div class="label arrow">Outils &amp; langues</div></div>
-    <div class="types">
-      <div><h4>Data &amp; ML</h4><p>Python, SQL, pandas, NumPy, scikit-learn, statsmodels.</p></div>
-      <div><h4>Visualisation &amp; systèmes</h4><p>Power BI, Streamlit, Matplotlib, Plotly, React ; FastAPI, Docker, CI/CD, SQLite, MySQL, Git.</p></div>
-      <div><h4>Langues</h4><p>Français (natif), anglais (B2).</p></div>
-    </div>
-  </section>
-
-  <section class="section" id="contact" style="scroll-margin-top:24px">
-    <div class="about">
-      <div>
-        <div class="label arrow">Contact</div>
-        <h2 style="margin-top:16px;max-width:20ch">Une idée de projet, des données à explorer, une collaboration ?</h2>
-        <p style="max-width:60ch">Je suis ouvert aux échanges avec des équipes data et R&amp;D, aux collaborations et aux propositions de sujets.</p>
-        <ContactForm />
-        {CONTACT.web3formsKey && <p class="meta" style="margin-top:32px">Ou directement :</p>}
-        <div class="actions" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
-          <a class="btn" href="https://www.linkedin.com/in/caleb-djarabe">LinkedIn ↗</a>
-          <a class="btn ghost" href="https://github.com/cdjarabe07">GitHub ↗</a>
+  <main class="frame">
+    <section class="section">
+      <div class="split">
+        <div>
+          <div class="label arrow">Caleb Djarabé</div>
+          <h2>Économiste de formation, tourné vers la data, l'IA et les systèmes.</h2>
+        </div>
+        <div>
+          <p style="margin-top:32px">Je m'appelle Caleb Djarabé et je vis à Dakar. J'ai étudié l'économie appliquée : une licence en sciences économiques et de gestion à l'Université St. Charles Lwanga, au Tchad. Je poursuis aujourd'hui un master en ingénierie financière en ligne, à WorldQuant University.</p>
+          <p>Mon orientation actuelle : la data science, l'IA et les systèmes data. Pas seulement entraîner des modèles, mais construire toute la chaîne : collecter des données publiques, les modéliser, mesurer l'incertitude, et rendre le résultat utilisable par quelqu'un qui n'est pas data scientist.</p>
+          <p>Ce qui m'intéresse le plus, c'est la recherche appliquée : partir d'une question concrète, souvent économique ou urbaine, et croiser les disciplines pour y répondre. Séries temporelles, imagerie satellite, données géospatiales, modèles de langage : les projets du lab en mobilisent souvent plusieurs à la fois.</p>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-</main>
+    <section>
+      <div class="split">
+        <div>
+          <div class="label arrow">Pourquoi <span class="tl">TheLab</span></div>
+          <h2>Un laboratoire personnel et indépendant.</h2>
+        </div>
+        <div>
+          <p style="margin-top:32px"><span class="tl">TheLab</span> est né d'une envie simple : ne pas s'éparpiller, sans pour autant brider la curiosité. Plutôt qu'une collection de petits exercices, le lab rassemble quelques projets de fond et la trace du travail qui les accompagne : ce qui a été essayé, ce qui a marché, ce qui a échoué.</p>
+          <p>C'est aussi une façon de travailler en public. Publier une méthode, ses limites et ses résultats négatifs oblige à être précis, et permet à d'autres de vérifier, de critiquer ou de reprendre le travail.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="list-head"><div class="label arrow">Ce que <span class="tl">TheLab</span> n'est pas</div></div>
+      <div class="types">
+        <div><h4>Un CV</h4><p>Le parcours complet est sur <a href={LINKS.linkedin}>LinkedIn</a>. Ici, on parle de ce qui est construit, expérimenté et appris.</p></div>
+        <div><h4>Un site institutionnel</h4><p>Aucune affiliation : ni BCEAO, ni UEMOA, ni collectivité. Les données publiques sont utilisées telles qu'elles sont publiées, et les résultats n'ont pas de valeur officielle.</p></div>
+        <div><h4>Un blog généraliste</h4><p>Les <a href="/notes/">notes</a> sont un carnet de laboratoire : chacune se rattache à un projet et à un moment précis du travail.</p></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="list-head"><div class="label arrow">Comment je travaille</div></div>
+      <div class="types">
+        <div><h4>Un problème réel d'abord</h4><p>Chaque projet part d'une question concrète, pas d'une technique à placer.</p></div>
+        <div><h4>Plusieurs disciplines</h4><p>Un projet doit apprendre plusieurs choses à la fois : données, modèles, systèmes, interface.</p></div>
+        <div><h4>Des limites affichées</h4><p>Intervalles de confiance, modèles naïfs, fonctionnalités désactivées : l'incertitude fait partie du résultat.</p></div>
+      </div>
+      <p class="list-intro muted">La <a href="/#trajectoire">trajectoire du lab</a> décrit la progression visée : des fondations vers les systèmes en production, les projets transversaux, puis la reproduction de papiers et la recherche originale.</p>
+    </section>
+
+    <section class="section" id="contact" style="scroll-margin-top:24px">
+      <div class="about">
+        <div>
+          <div class="label arrow">Contact</div>
+          <h2 style="margin-top:16px;max-width:20ch">Une idée de projet, des données à explorer, une collaboration ?</h2>
+          <p style="max-width:60ch">Je suis ouvert aux échanges avec des équipes data et R&amp;D, aux collaborations et aux propositions de sujets.</p>
+          <ContactForm />
+          {CONTACT.web3formsKey && <p class="meta" style="margin-top:32px">Ou directement :</p>}
+          <div class="actions" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+            <a class="btn" href={LINKS.linkedin}>LinkedIn ↗</a>
+            <a class="btn ghost" href={LINKS.github}>GitHub ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 </Base>
