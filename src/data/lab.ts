@@ -86,7 +86,7 @@ export const CONTACT = { web3formsKey: "a02567b5-8e6f-4617-9ffa-d367864d9286" };
  * L'envoi automatique se règle dans Buttondown (Automations → RSS-to-email) avec le flux /notes/rss.xml.
  * Tant que ce champ est vide, aucun formulaire d'abonnement n'est affiché.
  */
-export const NEWSLETTER = { buttondown: "" };
+export const NEWSLETTER = { buttondown: "djarabe" };
 
 /**
  * Statistiques de visite (Vercel Web Analytics) : sans cookies, sans bandeau de consentement.
