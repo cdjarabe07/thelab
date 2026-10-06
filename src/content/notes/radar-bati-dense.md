@@ -2,7 +2,8 @@
 title: "Le radar ne voit pas l'eau en ville"
 type: "apprentissage"
 excerpt: "Pikine, Thiaroye, Guinaw Rail et Médina ressortent à 0 % d'eau stagnante après les fortes pluies. Ce n'est pas une absence d'inondation : c'est une limite physique du radar Sentinel-1 en bâti dense."
-draft: true
+draft: false
+date: 2026-10-06
 minutes: "5–6"
 projects: ["dakar-risque-inondation"]
 domains: ["earth-observation", "geospatial"]

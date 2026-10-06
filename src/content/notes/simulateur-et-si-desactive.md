@@ -2,7 +2,8 @@
 title: "Pourquoi le simulateur « et si » reste désactivé"
 type: "postmortem"
 excerpt: "Un SARIMAX reliant prix du pétrole et inflation a été testé. Avec moins de 30 années de données annuelles, le lien n'est pas statistiquement fiable : la fonctionnalité attend."
-draft: true
+draft: false
+date: 2026-10-06
 minutes: "3–4"
 projects: ["observatoire-uemoa"]
 domains: ["time-series", "decision-intelligence"]

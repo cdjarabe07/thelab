@@ -2,7 +2,8 @@
 title: "Quand le modèle naïf gagne : prévoir une série en marche aléatoire"
 type: "experience"
 excerpt: "Sur le taux de change, le meilleur SARIMA obtient une MAE de 28,45 contre 28,47 pour la dernière valeur connue : aucun gain réel. L'observatoire affiche donc le modèle naïf, et le dit."
-draft: true
+draft: false
+date: 2026-10-06
 minutes: "5–7"
 projects: ["observatoire-uemoa"]
 domains: ["time-series", "data-science"]

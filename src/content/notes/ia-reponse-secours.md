@@ -2,7 +2,8 @@
 title: "Une IA qui explique, mais ne décide pas"
 type: "journal"
 excerpt: "Coupure à 5 secondes, réponses pré-rédigées, refus du hors-sujet, 18 scénarios de test : comment l'assistant de l'observatoire reste utile même quand le modèle de langage ne répond pas."
-draft: true
+draft: false
+date: 2026-10-06
 minutes: "4–6"
 projects: ["dakar-risque-inondation"]
 domains: ["llm", "web"]
